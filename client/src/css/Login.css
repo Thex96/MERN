@@ -1,0 +1,339 @@
+.login-page {
+  width: 100%;
+  height: calc(100vh - 80px);
+  min-height: 620px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  background: #131313;
+}
+
+.login-left {
+  height: 100%;
+  padding: 40px 7%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #131313;
+  color: #f3f3f3;
+  border-right: 1px solid #333333;
+}
+
+.login-left-top,
+.login-left-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.login-left-top span:first-child {
+  color: #f5cb5c;
+}
+
+.login-left-top span:last-child,
+.login-left-bottom {
+  color: #666666;
+}
+
+.login-left-content {
+  transform: translateY(-10px);
+}
+
+.login-left-content p {
+  margin: 0 0 28px;
+
+  color: #f5cb5c;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.login-left-content h1 {
+  margin: 0;
+
+  font-family: "Playfair Display", serif;
+  font-size: clamp(65px, 7vw, 115px);
+  font-weight: 500;
+  line-height: 0.84;
+  letter-spacing: -5px;
+}
+
+.login-left-content h1 span {
+  color: #777777;
+}
+
+.login-left-bottom span:last-child {
+  color: #555555;
+}
+
+.login-right {
+  position: relative;
+  height: 100%;
+  padding: 60px 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9e7df;
+  color: #131313;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 450px;
+}
+
+.login-box-header {
+  padding-bottom: 25px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid #b9b7b0;
+}
+
+.login-box-header p {
+  margin: 0 0 9px;
+
+  color: #777777;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.login-box-header h2 {
+  margin: 0;
+
+  font-family: "Playfair Display", serif;
+  font-size: 42px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -1.5px;
+}
+
+.login-box-header > span {
+  color: #8b741b;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.login-form {
+  margin-top: 38px;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.login-field + .login-field {
+  margin-top: 28px;
+}
+
+.login-field label {
+  color: #555555;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.login-field input {
+  width: 100%;
+  padding: 13px 0;
+
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #aaa8a0;
+  outline: none;
+
+  color: #131313;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 13px;
+
+  transition: border-color 0.3s ease;
+}
+
+.login-field input::placeholder {
+  color: #99978f;
+}
+
+.login-field input:focus {
+  border-color: #8b741b;
+}
+
+.login-form-options {
+  margin-top: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.login-remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #777777;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+}
+
+.login-remember input {
+  width: 12px;
+  height: 12px;
+  accent-color: #8b741b;
+}
+
+.login-form-options > button {
+  padding: 0;
+
+  background: transparent;
+  border: none;
+
+  color: #8b741b;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+}
+
+.login-submit {
+  width: 100%;
+  margin-top: 32px;
+  padding: 17px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #131313;
+  border: 1px solid #131313;
+
+  color: #f5cb5c;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.login-submit span:last-child {
+  font-size: 16px;
+}
+
+.login-submit:hover {
+  background: transparent;
+  color: #131313;
+}
+
+.login-create {
+  margin-top: 40px;
+  padding-top: 22px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 30px;
+
+  border-top: 1px solid #b9b7b0;
+}
+
+.login-create > div span {
+  color: #777777;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.login-create > div p {
+  max-width: 190px;
+  margin: 8px 0 0;
+
+  color: #888680;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.login-create a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  color: #131313;
+  text-decoration: none;
+
+  white-space: nowrap;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+
+.login-create a span {
+  color: #8b741b;
+  font-size: 14px;
+
+  transition: transform 0.3s ease;
+}
+
+.login-create a:hover span {
+  transform: translate(3px, -3px);
+}
+
+.login-right-mark {
+  position: absolute;
+  right: 28px;
+  bottom: 28px;
+
+  color: #c4c1b8;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 2px;
+
+  writing-mode: vertical-rl;
+}
+
+.login-error {
+  margin: 18px 0 -10px;
+  color: #8b741b;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  line-height: 1.5;
+}

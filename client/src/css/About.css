@@ -1,0 +1,455 @@
+.about-page {
+  min-height: 100vh;
+  background: #131313;
+  color: #f3f3f3;
+  overflow: hidden;
+}
+
+.about-hero {
+  min-height: 720px;
+  padding: 55px 6% 50px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #333333;
+}
+
+.about-hero-top,
+.about-hero-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  color: #777777;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.about-hero-top span:first-child {
+  color: #f5cb5c;
+}
+
+.about-hero-title {
+  display: flex;
+  flex-direction: column;
+
+  font-family: "Playfair Display", serif;
+  font-size: clamp(120px, 19vw, 300px);
+  font-weight: 500;
+  line-height: 0.68;
+  letter-spacing: -12px;
+}
+
+.about-hero-title span:last-child {
+  color: #777777;
+}
+
+.about-hero-offset {
+  margin-left: 17%;
+}
+
+.about-hero-bottom p {
+  max-width: 330px;
+  margin: 0;
+
+  color: #888888;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.8;
+  letter-spacing: 0;
+}
+
+.about-hero-bottom span {
+  color: #f5cb5c;
+}
+
+.about-manifesto {
+  min-height: 700px;
+  padding: 110px 12% 110px 6%;
+
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 80px;
+}
+
+.about-manifesto-mark {
+  padding-top: 10px;
+
+  color: #555555;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 10px;
+}
+
+.about-manifesto-content {
+  display: grid;
+  grid-template-columns: 1fr 330px;
+  gap: 100px;
+  align-items: end;
+}
+
+.about-eyebrow {
+  margin: 0 0 25px;
+
+  color: #f5cb5c;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.about-manifesto-content h2 {
+  margin: 0;
+
+  font-family: "Playfair Display", serif;
+  font-size: clamp(60px, 7vw, 105px);
+  font-weight: 500;
+  line-height: 0.88;
+  letter-spacing: -3px;
+}
+
+.about-manifesto-content h2 em {
+  color: #f5cb5c;
+  font-style: italic;
+}
+
+.about-manifesto-copy {
+  padding-bottom: 5px;
+}
+
+.about-manifesto-copy p {
+  margin: 0 0 22px;
+
+  color: #777777;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.about-values {
+  padding: 120px 6%;
+
+  display: grid;
+  grid-template-columns: 0.7fr 1.3fr;
+  gap: 120px;
+}
+
+.about-values-intro {
+  position: sticky;
+  top: 40px;
+  align-self: start;
+}
+
+.about-values-intro h2 {
+  margin: 0;
+
+  font-family: "Playfair Display", serif;
+  font-size: clamp(55px, 6vw, 90px);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -2px;
+}
+
+.about-values-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+
+  background: #333333;
+  border: 1px solid #333333;
+}
+
+.about-value {
+  min-height: 300px;
+  padding: 30px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  background: #131313;
+}
+
+.about-value span {
+  color: #555555;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+}
+
+.about-value h3 {
+  margin: 0;
+
+  font-family: "Playfair Display", serif;
+  font-size: 55px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.about-value p {
+  max-width: 250px;
+  margin: 0;
+
+  color: #777777;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.value-two {
+  transform: translateY(60px);
+}
+
+.value-three {
+  transform: translateY(-30px);
+}
+
+.value-four {
+  transform: translateY(30px);
+}
+
+.about-foodsaver {
+  min-height: 700px;
+  padding: 100px 10%;
+
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 100px;
+  align-items: center;
+
+  background: #e9e7df;
+  color: #131313;
+}
+
+.about-foodsaver-stamp {
+  width: 310px;
+  height: 310px;
+  margin: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #131313;
+  border-radius: 50%;
+
+  transform: rotate(-8deg);
+}
+
+.about-foodsaver-stamp span {
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 5px;
+}
+
+.about-foodsaver-stamp strong {
+  font-family: "Playfair Display", serif;
+  font-size: 60px;
+  font-weight: 500;
+}
+
+.about-foodsaver-stamp small {
+  margin-top: 10px;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.about-foodsaver-content {
+  max-width: 600px;
+}
+
+.about-foodsaver-content .about-eyebrow {
+  color: #555555;
+}
+
+.about-foodsaver-content h2 {
+  margin: 0;
+
+  font-family: "Playfair Display", serif;
+  font-size: clamp(55px, 6vw, 90px);
+  font-weight: 500;
+  line-height: 0.88;
+  letter-spacing: -2px;
+}
+
+.about-foodsaver-content h2 em {
+  color: #8b741b;
+  font-style: italic;
+}
+
+.about-foodsaver-content > p:not(.about-eyebrow) {
+  max-width: 450px;
+  margin: 30px 0;
+
+  color: #666666;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.about-foodsaver-content a,
+.about-partners-content a {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+
+  color: #131313;
+  text-decoration: none;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.about-foodsaver-content a span,
+.about-partners-content a span {
+  font-size: 16px;
+}
+
+.about-partners {
+  padding: 130px 12% 130px 6%;
+
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 100px;
+
+  border-bottom: 1px solid #333333;
+}
+
+.about-partners-number {
+  color: #555555;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 10px;
+}
+
+.about-partners-content {
+  max-width: 800px;
+}
+
+.about-partners-content h2 {
+  margin: 0;
+
+  font-family: "Playfair Display", serif;
+  font-size: clamp(65px, 8vw, 120px);
+  font-weight: 500;
+  line-height: 0.83;
+  letter-spacing: -4px;
+}
+
+.about-partners-content h2 em {
+  color: #f5cb5c;
+  font-style: italic;
+}
+
+.about-partners-copy {
+  max-width: 430px;
+  margin: 45px 0 30px;
+
+  color: #777777;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.about-partners-content a {
+  color: #888888;
+}
+
+.about-partners-content a span {
+  color: #f5cb5c;
+}
+
+.about-final {
+  min-height: 650px;
+  padding: 100px 6%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.about-final-small {
+  margin-bottom: 25px;
+
+  color: #f5cb5c;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.about-final h2 {
+  margin: 0;
+
+  font-family: "Playfair Display", serif;
+  font-size: clamp(80px, 11vw, 170px);
+  font-weight: 500;
+  line-height: 0.78;
+  letter-spacing: -7px;
+}
+
+.about-final h2 span {
+  color: #777777;
+}
+
+.about-final > p {
+  margin: 35px 0 25px;
+
+  color: #777777;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+}
+
+.about-final > a {
+  padding: 14px 22px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 25px;
+
+  background: #f5cb5c;
+  border: 1px solid #f5cb5c;
+
+  color: #131313;
+  text-decoration: none;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.about-final > a span {
+  font-size: 16px;
+}
+
+.about-final > a:hover {
+  background: transparent;
+  color: #f5cb5c;
+}

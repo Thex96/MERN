@@ -1,0 +1,432 @@
+.checkout-page {
+  min-height: calc(100vh - 80px);
+  background: #131313;
+  color: #f3f3f3;
+}
+
+.checkout-header {
+  padding: 65px 6% 55px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-bottom: 1px solid #333333;
+}
+
+.checkout-header > div:first-child p {
+  margin: 0 0 20px;
+  color: #f5cb5c;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.checkout-header h1 {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(70px, 8vw, 120px);
+  font-weight: 500;
+  line-height: 0.8;
+  letter-spacing: -5px;
+}
+
+.checkout-header h1 span {
+  color: #777777;
+}
+
+.checkout-steps {
+  display: flex;
+  align-items: center;
+  gap: 45px;
+}
+
+.checkout-steps > div {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #555555;
+}
+
+.checkout-steps > div:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: calc(100% + 15px);
+  width: 30px;
+  height: 1px;
+  background: #333333;
+}
+
+.checkout-steps span {
+  font-family: "Manrope", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.checkout-steps p {
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.checkout-steps .active {
+  color: #f5cb5c;
+}
+
+.checkout-content {
+  padding: 90px 6%;
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 110px;
+}
+
+.checkout-form-area {
+  max-width: 700px;
+}
+
+.checkout-section-heading {
+  display: grid;
+  grid-template-columns: 45px 1fr;
+  gap: 25px;
+  margin-bottom: 55px;
+}
+
+.checkout-section-heading > span {
+  color: #f5cb5c;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.checkout-section-heading p {
+  margin: 0 0 12px;
+  color: #777777;
+  font-family: "Manrope", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.checkout-section-heading h2 {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-size: 48px;
+  font-weight: 500;
+  line-height: 0.9;
+}
+
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.checkout-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkout-field label {
+  color: #777777;
+  font-family: "Manrope", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.checkout-field input,
+.checkout-field textarea {
+  width: 100%;
+  padding: 13px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #444444;
+  outline: none;
+  resize: none;
+  color: #f3f3f3;
+  font-family: "Manrope", sans-serif;
+  font-size: 13px;
+}
+
+.checkout-field input::placeholder,
+.checkout-field textarea::placeholder {
+  color: #555555;
+}
+
+.checkout-field input:focus,
+.checkout-field textarea:focus {
+  border-color: #f5cb5c;
+}
+
+.checkout-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.checkout-submit {
+  margin-top: 10px;
+  padding: 17px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f5cb5c;
+  border: 1px solid #f5cb5c;
+  color: #131313;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.checkout-submit span {
+  font-size: 16px;
+}
+
+.checkout-submit:hover {
+  background: transparent;
+  color: #f5cb5c;
+}
+
+.checkout-summary {
+  align-self: start;
+  padding: 30px;
+  background: #e9e7df;
+  color: #131313;
+}
+
+.checkout-summary-heading {
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #b9b7b0;
+  color: #777777;
+  font-family: "Manrope", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.checkout-items {
+  padding: 10px 0;
+}
+
+.checkout-item {
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid #d0cec6;
+}
+
+.checkout-item > div {
+  display: grid;
+  grid-template-columns: 35px 1fr;
+}
+
+.checkout-item > div > span {
+  color: #8b741b;
+  font-family: "Manrope", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.checkout-item h3 {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.checkout-item p {
+  grid-column: 2;
+  margin: 5px 0 0;
+  color: #777777;
+  font-family: "Manrope", sans-serif;
+  font-size: 8px;
+}
+
+.checkout-item strong {
+  font-family: "Manrope", sans-serif;
+  font-size: 10px;
+}
+
+.checkout-total {
+  padding-top: 20px;
+}
+
+.checkout-total > div {
+  padding: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  color: #777777;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+}
+
+.checkout-total strong {
+  color: #131313;
+}
+
+.checkout-total .checkout-grand-total {
+  margin-top: 12px;
+  padding-top: 20px;
+  border-top: 1px solid #aaa8a0;
+  color: #131313;
+  font-size: 11px;
+}
+
+.checkout-grand-total strong {
+  font-size: 17px;
+}
+
+.payment-option {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid #444444;
+  cursor: pointer;
+}
+
+.payment-option:has(input:checked) {
+  border-color: #f5cb5c;
+}
+
+.payment-option input {
+  accent-color: #f5cb5c;
+}
+
+.payment-option div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.payment-option strong {
+  font-family: "Playfair Display", serif;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.payment-option span {
+  color: #777777;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+}
+
+.checkout-confirmation {
+  min-height: 650px;
+  padding: 110px 6%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.checkout-confirmation > p:first-child {
+  margin: 0 0 25px;
+  color: #f5cb5c;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.checkout-confirmation h2 {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(80px, 10vw, 150px);
+  font-weight: 500;
+  line-height: 0.8;
+  letter-spacing: -6px;
+}
+
+.checkout-confirmation h2 em {
+  color: #777777;
+}
+
+.confirmation-number {
+  margin-top: 35px;
+  color: #888888;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.confirmation-copy {
+  max-width: 400px;
+  margin: 25px 0 30px;
+  color: #777777;
+  font-family: "Manrope", sans-serif;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.checkout-confirmation a {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  color: #f5cb5c;
+  text-decoration: none;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.checkout-confirmation a span {
+  font-size: 16px;
+}
+
+.checkout-empty {
+  min-height: calc(100vh - 80px);
+  padding: 100px 6%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #131313;
+  color: #f3f3f3;
+}
+
+.checkout-empty > p {
+  margin: 0 0 20px;
+  color: #f5cb5c;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.checkout-empty h1 {
+  margin: 0 0 35px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(70px, 8vw, 120px);
+  font-weight: 500;
+  line-height: 0.8;
+  letter-spacing: -5px;
+}
+
+.checkout-empty a {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  color: #f5cb5c;
+  text-decoration: none;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.checkout-empty a span {
+  font-size: 16px;
+}

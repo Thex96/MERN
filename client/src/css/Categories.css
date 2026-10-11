@@ -1,0 +1,152 @@
+.categories {
+  padding: 140px 6%;
+  background-color: #f3f3f3;
+  color: #131313;
+}
+
+.categories-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 70px;
+}
+
+.section-label {
+  margin: 0;
+
+  color: #888888;
+  font-family: "Manrope", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.categories h2 {
+  margin: 0;
+
+  font-family: "Playfair Display", serif;
+  font-size: clamp(48px, 5vw, 76px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -2px;
+  text-align: right;
+}
+
+.categories-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 45px 28px;
+}
+
+.category-item {
+  position: relative;
+  border-top: 1px solid #cccccc;
+  padding-top: 18px;
+}
+
+.category-number {
+  color: #888888;
+  font-family: "Manrope", sans-serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
+}
+
+.category-image-container {
+  width: 100%;
+  height: 270px;
+  overflow: hidden;
+  background-color: #dddddd;
+}
+
+.category-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+
+  object-fit: cover;
+
+  filter: grayscale(100%);
+  transition:
+    transform 0.7s ease,
+    filter 0.7s ease;
+}
+
+.category-item:hover .category-image {
+  transform: scale(1.04);
+  filter: grayscale(10%);
+}
+
+.category-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding-top: 18px;
+}
+
+.category-info h3 {
+  margin: 0;
+
+  font-family: "Playfair Display", serif;
+  font-size: 25px;
+  font-weight: 500;
+}
+
+.category-info span {
+  color: #888888;
+
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+
+  transition: color 0.3s ease;
+}
+
+.category-item:hover .category-info span {
+  color: #c9c020;
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+  .categories {
+    padding: 100px 6%;
+  }
+
+  .categories-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .categories h2 {
+    text-align: left;
+  }
+
+  .categories-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .categories {
+    padding: 80px 6%;
+  }
+
+  .categories-list {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .category-image-container {
+    height: 300px;
+  }
+
+  .categories h2 {
+    font-size: 52px;
+  }
+}
