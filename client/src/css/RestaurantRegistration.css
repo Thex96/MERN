@@ -1,0 +1,332 @@
+
+.restaurant-registration {
+  min-height: 100vh;
+  padding: 56px 8% 30px;
+  background: #131313;
+  color: #f3f3f3;
+  font-family: "Manrope", sans-serif;
+}
+
+.restaurant-registration-header {
+  max-width: 760px;
+  padding: 24px 0 46px;
+  border-bottom: 1px solid #3c3c3c;
+}
+
+.restaurant-registration-eyebrow,
+.restaurant-registration-section-label {
+  color: #c9c020;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.restaurant-registration-header h1 {
+  margin-top: 24px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(42px, 6vw, 72px);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -1px;
+  overflow-wrap: anywhere;
+}
+
+.restaurant-registration-header h1 span {
+  color: #888888;
+  font-style: italic;
+}
+
+.restaurant-registration-intro {
+  max-width: 530px;
+  margin-top: 22px;
+  color: #a0a0a0;
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.restaurant-registration-form {
+  width: 100%;
+  max-width: 900px;
+  margin-top: 14px;
+}
+
+.restaurant-registration-section {
+  padding: 35px 0;
+  border-bottom: 1px solid #3c3c3c;
+}
+
+.restaurant-registration-section-label {
+  margin-bottom: 28px;
+  line-height: 1.7;
+}
+
+.restaurant-registration-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 25px 28px;
+}
+
+.restaurant-registration-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  min-width: 0;
+  color: #b0b0b0;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+
+.restaurant-registration-grid input,
+.restaurant-registration-grid select,
+.restaurant-registration-grid textarea {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid #414141;
+  border-radius: 0;
+  outline: none;
+  background: #1b1b1b;
+  color: #f3f3f3;
+  padding: 14px 15px;
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  transition: border-color 0.2s ease;
+}
+
+.restaurant-registration-grid input,
+.restaurant-registration-grid select {
+  min-height: 47px;
+}
+
+.restaurant-registration-grid textarea {
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.7;
+}
+
+.restaurant-registration-grid input::placeholder,
+.restaurant-registration-grid textarea::placeholder {
+  color: #707070;
+}
+
+.restaurant-registration-grid select {
+  color-scheme: dark;
+}
+
+.restaurant-registration-grid input:focus,
+.restaurant-registration-grid select:focus,
+.restaurant-registration-grid textarea:focus {
+  border-color: #c9c020;
+}
+
+.restaurant-registration-grid input:focus-visible,
+.restaurant-registration-grid select:focus-visible,
+.restaurant-registration-grid textarea:focus-visible {
+  outline: 1px solid #c9c020;
+  outline-offset: 2px;
+}
+
+.restaurant-registration-full {
+  grid-column: 1 / -1;
+}
+
+.restaurant-registration-submit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 35px;
+  padding: 32px 0;
+}
+
+.restaurant-registration-submit p {
+  max-width: 440px;
+  color: #888888;
+  font-size: 11px;
+  line-height: 1.9;
+}
+
+.restaurant-registration-submit button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  min-width: 225px;
+  min-height: 48px;
+  padding: 16px 18px;
+  border: 1px solid #f2ec0d;
+  background: #f2ec0d;
+  color: #131313;
+  font-family: "Manrope", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.restaurant-registration-submit button:hover {
+  background: transparent;
+  color: #f2ec0d;
+}
+
+.restaurant-registration-submit button span {
+  font-size: 17px;
+}
+
+.restaurant-registration-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 25px;
+  padding-top: 22px;
+  border-top: 1px solid #3c3c3c;
+}
+
+.restaurant-registration-footer > span,
+.restaurant-registration-footer a {
+  color: #888888;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  line-height: 1.6;
+  text-decoration: none;
+}
+
+.restaurant-registration-footer a span {
+  margin-left: 5px;
+  color: #c9c020;
+}
+
+.restaurant-registration-footer a:hover {
+  color: #f3f3f3;
+}
+
+@media (min-width: 651px) and (max-width: 1024px) {
+  .restaurant-registration {
+    padding: 42px 6% 28px;
+  }
+
+  .restaurant-registration-header {
+    max-width: 100%;
+    padding-bottom: 38px;
+  }
+
+  .restaurant-registration-header h1 {
+    font-size: clamp(42px, 6vw, 62px);
+  }
+
+  .restaurant-registration-form {
+    max-width: 100%;
+  }
+
+  .restaurant-registration-grid {
+    gap: 22px;
+  }
+
+  .restaurant-registration-submit {
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .restaurant-registration-submit button {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 650px) {
+  .restaurant-registration {
+    padding: 28px 5% 22px;
+  }
+
+  .restaurant-registration-header {
+    padding: 18px 0 32px;
+  }
+
+  .restaurant-registration-header h1 {
+    font-size: clamp(34px, 9vw, 44px);
+    line-height: 1.08;
+    letter-spacing: -0.5px;
+  }
+
+  .restaurant-registration-intro {
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  .restaurant-registration-section {
+    padding: 24px 0;
+  }
+
+  .restaurant-registration-section-label {
+    letter-spacing: 1.5px;
+  }
+
+  .restaurant-registration-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .restaurant-registration-grid label {
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .restaurant-registration-grid input,
+  .restaurant-registration-grid select,
+  .restaurant-registration-grid textarea {
+    font-size: 16px;
+    padding: 13px 12px;
+  }
+
+  .restaurant-registration-full {
+    grid-column: auto;
+  }
+
+  .restaurant-registration-submit {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 0;
+  }
+
+  .restaurant-registration-submit p {
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  .restaurant-registration-submit button {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+  }
+
+  .restaurant-registration-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .restaurant-registration-footer > span,
+  .restaurant-registration-footer a {
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+}
+
+@media (max-width: 360px) {
+  .restaurant-registration {
+    padding-inline: 16px;
+  }
+
+  .restaurant-registration-header h1 {
+    font-size: 33px;
+  }
+
+  .restaurant-registration-grid input,
+  .restaurant-registration-grid select,
+  .restaurant-registration-grid textarea {
+    padding-inline: 10px;
+  }
+}
