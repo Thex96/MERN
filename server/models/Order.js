@@ -11,7 +11,6 @@ const orderItemSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      maxlength: 150,
     },
     image: {
       type: String,
@@ -26,6 +25,57 @@ const orderItemSchema = new mongoose.Schema(
       type: Number,
       required: true,
       min: 0,
+    },
+  },
+  { _id: false }
+);
+
+const deliveryAddressSnapshotSchema = new mongoose.Schema(
+  {
+    addressId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "DeliveryAddress",
+      default: null,
+    },
+    label: {
+      type: String,
+      enum: ["Home", "Work", "Other"],
+      default: "Home",
+    },
+    fullName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    addressLine: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    area: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    city: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    state: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    postalCode: {
+      type: String,
+      required: true,
+      trim: true,
     },
   },
   { _id: false }
@@ -49,7 +99,7 @@ const orderSchema = new mongoose.Schema(
       type: [orderItemSchema],
       required: true,
       validate: {
-        validator: (items) => items.length > 0,
+        validator: (items) => Array.isArray(items) && items.length > 0,
         message: "An order must contain at least one item.",
       },
     },
@@ -57,6 +107,11 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
       min: 0,
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["cod", "upi", "card"],
+      required: true,
     },
     paymentStatus: {
       type: String,
@@ -80,22 +135,18 @@ const orderSchema = new mongoose.Schema(
     },
     paymentReference: {
       type: String,
-      default: "",
+      default: null,
       trim: true,
     },
     deliveryAddress: {
-      type: String,
+      type: deliveryAddressSnapshotSchema,
       required: true,
-      trim: true,
-      maxlength: 500,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 orderSchema.index({ customer: 1, createdAt: -1 });
-orderSchema.index({ restaurant: 1, paymentStatus: 1, createdAt: -1 });
+orderSchema.index({ restaurant: 1, orderStatus: 1, createdAt: -1 });
 
 module.exports = mongoose.model("Order", orderSchema);
