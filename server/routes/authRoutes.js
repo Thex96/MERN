@@ -166,9 +166,20 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    if (user.role !== "admin" && user.role !== requestedRole) {
-      user.role = requestedRole;
-      await user.save();
+    if (user.role === "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Please sign in through the admin access page.",
+      });
+    }
+
+    if (user.role !== requestedRole) {
+      return res.status(403).json({
+        success: false,
+        message: user.role === "restaurant"
+          ? "This account is registered as a restaurant manager. Choose Restaurant Manager to continue."
+          : "This account is registered as a customer. Choose Customer to continue.",
+      });
     }
 
     const token = createToken(user._id.toString());
@@ -186,6 +197,31 @@ router.post("/login", async (req, res) => {
       success: false,
       message: "Unable to log in. Please try again.",
     });
+  }
+});
+
+router.post("/admin-login", async (req, res) => {
+  try {
+    const { password } = req.body || {};
+    if (typeof password !== "string" || !password) {
+      return res.status(400).json({ success: false, message: "Enter the admin password." });
+    }
+
+    const admin = await User.findOne({ role: "admin" }).select("+password");
+    if (!admin || !(await bcrypt.compare(password, admin.password))) {
+      return res.status(401).json({ success: false, message: "Invalid admin password." });
+    }
+
+    const token = createToken(admin._id.toString());
+    return res.status(200).json({
+      success: true,
+      message: "Admin login successful.",
+      token,
+      user: getPublicUser(admin),
+    });
+  } catch (error) {
+    console.error("Admin login error:", error.message);
+    return res.status(500).json({ success: false, message: "Unable to sign in as admin." });
   }
 });
 

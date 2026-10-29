@@ -1,0 +1,39 @@
+.admin-access-page { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: #080808; color: #f3f3f3; }
+.admin-access-card { width: min(100%, 390px); text-align: center; }
+.admin-access-title { margin-bottom: 15px; color: #f5cb5c; font-family: "Manrope", sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 5px; }
+.admin-access-box { display: flex; min-height: 64px; border: 1px solid #c9c020; background: #050505; }
+.admin-access-box input { flex: 1; min-width: 0; padding: 0 19px; border: 0; outline: 0; background: transparent; color: #f3f3f3; font: 12px "Manrope", sans-serif; letter-spacing: 2px; }
+.admin-access-box input::placeholder { color: #777; }
+.admin-access-box:focus-within { box-shadow: 0 0 0 2px #c9c02055; }
+.admin-access-box button { width: 62px; border: 0; border-left: 1px solid #c9c020; background: #c9c020; color: #080808; font-size: 22px; cursor: pointer; }
+.admin-access-box button:disabled { opacity: .65; cursor: wait; }
+.admin-access-error, .admin-page-error { margin-top: 14px; color: #e1a3a3; font: 12px "Manrope", sans-serif; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.admin-page { min-height: 100vh; padding: 46px 7% 25px; background: #111; color: #f3f3f3; font-family: "Manrope", sans-serif; }
+.admin-page-header, .admin-review-heading, .admin-application-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.admin-page-header { padding-bottom: 24px; border-bottom: 1px solid #383838; }
+.admin-page-header p, .admin-review-heading > div > p { color: #c9c020; font-size: 9px; font-weight: 700; letter-spacing: 2px; }
+.admin-page-header h1 { margin-top: 8px; font: 42px "Playfair Display", serif; }
+.admin-page-header h1 span { color: #c9c020; }
+.admin-page-account { display: flex; align-items: center; gap: 18px; color: #999; font-size: 11px; }
+.admin-page-account button, .admin-application-actions button { padding: 11px 14px; border: 1px solid #c9c020; background: #c9c020; color: #111; font-size: 9px; font-weight: 700; letter-spacing: 1px; cursor: pointer; }
+.admin-review-section { max-width: 1000px; margin: 44px auto; }
+.admin-review-heading { margin-bottom: 22px; }
+.admin-review-heading h2 { margin-top: 8px; font: 34px "Playfair Display", serif; }
+.admin-review-heading label, .admin-rejection-form label { display: grid; gap: 8px; color: #999; font-size: 9px; letter-spacing: 1px; }
+.admin-review-heading select { padding: 10px 13px; border: 1px solid #555; background: #1d1d1d; color: #f3f3f3; }
+.admin-application-list { display: grid; gap: 15px; }
+.admin-application { padding: 23px; border: 1px solid #383838; background: #191919; }
+.admin-application-heading { padding-bottom: 16px; border-bottom: 1px solid #333; }
+.admin-application-heading h3 { font: 24px "Playfair Display", serif; }
+.admin-application-heading p, .admin-application-heading small { margin-top: 6px; color: #c9c020; font-size: 9px; letter-spacing: 1px; }
+.admin-application-heading small { color: #888; }
+.admin-application-details { display: grid; gap: 9px; padding: 17px 0; color: #bbb; font-size: 12px; line-height: 1.6; }
+.admin-application-details strong { margin-right: 8px; color: #888; font-size: 8px; letter-spacing: 1px; }
+.admin-application-actions { display: flex; gap: 10px; padding-top: 14px; border-top: 1px solid #333; }
+.admin-application-actions button + button, .admin-rejection-form button:last-child { border-color: #555; background: transparent; color: #ddd; }
+.admin-rejection-form { display: grid; width: 100%; gap: 10px; }
+.admin-rejection-form textarea { min-height: 72px; padding: 10px; border: 1px solid #555; background: #111; color: #f3f3f3; resize: vertical; }
+.admin-empty { padding: 26px 0; color: #999; font-size: 13px; }
+.admin-page-footer { padding-top: 20px; border-top: 1px solid #383838; color: #777; font-size: 9px; letter-spacing: 2px; }
+@media (max-width: 600px) { .admin-page { padding: 30px 5% 20px; } .admin-page-header, .admin-application-heading { align-items: flex-start; flex-direction: column; } .admin-page-account { width: 100%; justify-content: space-between; } .admin-review-heading { align-items: flex-start; } .admin-application { padding: 17px; } }

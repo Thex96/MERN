@@ -13,6 +13,8 @@ import Checkout from "./pages/Checkout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RestaurantDashboard from "./pages/RestaurantDashboard";
 import RestaurantRegistration from "./pages/RestaurantRegistration";
+import AdminAccess from "./pages/AdminAccess";
+import AdminPage from "./pages/AdminPage";
 
 
 function App() {
@@ -39,6 +41,16 @@ function App() {
     <Route path="/cart" element={<Cart />} />
 
     <Route path="/login" element={<Login />} />
+
+    <Route path="/accessadmin" element={<AdminAccess />} />
+    <Route
+      path="/adminpage"
+      element={
+        <ProtectedRoute role="admin">
+          <AdminPage />
+        </ProtectedRoute>
+      }
+    />
 
     <Route path="/signup" element={<Signup />} />
 

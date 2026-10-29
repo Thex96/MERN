@@ -8,6 +8,7 @@ import "../css/RestaurantRegistration.css";
 
 function RestaurantRegistration({ embedded = false, onSubmitted }) {
   const { user } = useAuth();
+  const MainContainer = embedded ? "section" : "main";
 
   const [formData, setFormData] = useState({
     restaurantName: "",
@@ -67,7 +68,7 @@ function RestaurantRegistration({ embedded = false, onSubmitted }) {
     <>
       {!embedded && <Navbar />}
 
-      <main className="restaurant-registration">
+      <MainContainer className="restaurant-registration">
         <header className="restaurant-registration-header">
           <p className="restaurant-registration-eyebrow">
             FOODEASE / RESTAURANT PARTNERS
@@ -275,7 +276,7 @@ function RestaurantRegistration({ embedded = false, onSubmitted }) {
             </Link>
           )}
         </footer>
-      </main>
+      </MainContainer>
     </>
   );
 }

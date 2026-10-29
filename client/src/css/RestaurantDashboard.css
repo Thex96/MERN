@@ -352,6 +352,32 @@
 .restaurant-dashboard-side { min-width: 0; }
 .restaurant-dashboard-side .restaurant-registration-link { min-width: 0; overflow-wrap: anywhere; }
 
+.restaurant-dashboard-header > .restaurant-registration-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 190px;
+  gap: 12px;
+  padding: 15px 16px;
+  border: 1px solid #f2ec0d;
+  background: #f2ec0d;
+  color: #131313;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.restaurant-dashboard-header > .restaurant-registration-link:hover {
+  background: transparent;
+  color: #f2ec0d;
+}
+.restaurant-dashboard-header > .restaurant-registration-link:focus-visible {
+  outline: 2px solid #f3f3f3;
+  outline-offset: 4px;
+}
+.restaurant-dashboard-header > .restaurant-registration-link span { font-size: 17px; }
+
 .manager-applications, .manager-tools { margin-top: 42px; }
 .manager-application-list { display: grid; gap: 12px; }
 .manager-application-card { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 20px 22px; border: 1px solid #3c3c3c; background: #1d1d1d; }
@@ -393,6 +419,7 @@
   .restaurant-dashboard-footer { flex-wrap: wrap; gap: 14px; }
   .restaurant-dashboard-order { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .manager-application-card { align-items: flex-start; }
+  .restaurant-dashboard-header > .restaurant-registration-link { width: 100%; }
 }
 
 @media (max-width: 480px) {

@@ -1,5 +1,6 @@
 
 const express = require("express");
+const mongoose = require("mongoose");
 const Restaurant = require("../models/Restaurant");
 const { protect, authorize } = require("../middleware/authMiddleware");
 
@@ -118,6 +119,51 @@ router.get("/mine", authorize("restaurant"), async (req, res) => {
       success: false,
       message: "Unable to retrieve your restaurant applications.",
     });
+  }
+});
+
+router.get("/admin/applications", authorize("admin"), async (req, res) => {
+  try {
+    const filter = {};
+    if (["pending", "approved", "rejected"].includes(req.query.status)) {
+      filter.status = req.query.status;
+    }
+    const restaurants = await Restaurant.find(filter)
+      .populate("owner", "username email")
+      .sort({ createdAt: -1 })
+      .lean();
+    return res.status(200).json({ success: true, restaurants });
+  } catch (error) {
+    console.error("Admin application lookup error:", error.message);
+    return res.status(500).json({ success: false, message: "Unable to load restaurant applications." });
+  }
+});
+
+router.patch("/admin/applications/:restaurantId/review", authorize("admin"), async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+    const { status, rejectionReason = "" } = req.body || {};
+    if (!mongoose.isValidObjectId(restaurantId)) {
+      return res.status(400).json({ success: false, message: "Invalid restaurant application." });
+    }
+    if (!["approved", "rejected"].includes(status)) {
+      return res.status(400).json({ success: false, message: "Choose approve or reject." });
+    }
+    if (typeof rejectionReason !== "string" || rejectionReason.length > 500) {
+      return res.status(400).json({ success: false, message: "Review notes must be 500 characters or fewer." });
+    }
+    const restaurant = await Restaurant.findByIdAndUpdate(
+      restaurantId,
+      { status, rejectionReason: status === "rejected" ? rejectionReason.trim() : "", reviewedAt: new Date() },
+      { new: true, runValidators: true }
+    ).populate("owner", "username email");
+    if (!restaurant) {
+      return res.status(404).json({ success: false, message: "Restaurant application not found." });
+    }
+    return res.status(200).json({ success: true, restaurant });
+  } catch (error) {
+    console.error("Admin application review error:", error.message);
+    return res.status(500).json({ success: false, message: "Unable to update this application." });
   }
 });
 

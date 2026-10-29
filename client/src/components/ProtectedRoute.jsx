@@ -18,7 +18,12 @@ function ProtectedRoute({ children, role }) {
   }
 
   if (role && user.role !== role) {
-    return <Navigate to={user.role === "restaurant" ? "/restaurant-dashboard" : "/dashboard"} replace />;
+    const destination = user.role === "admin"
+      ? "/adminpage"
+      : user.role === "restaurant"
+        ? "/restaurant-dashboard"
+        : "/dashboard";
+    return <Navigate to={destination} replace />;
   }
 
   return children;

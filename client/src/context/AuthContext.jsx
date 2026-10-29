@@ -116,6 +116,21 @@ function AuthProvider({ children }) {
     return data;
   }
 
+  async function adminLogin(password) {
+    let response;
+    try {
+      response = await api.post("/auth/admin-login", { password });
+    } catch (error) {
+      throw new Error(getErrorMessage(error, "Unable to sign in as admin."));
+    }
+    const data = response.data;
+    if (data.user?.role !== "admin" || !data.token) {
+      throw new Error(data.message || "The server did not return a valid admin session.");
+    }
+    saveSession(data.user, data.token);
+    return data;
+  }
+
   function logout() {
     localStorage.removeItem("foodease_user");
     localStorage.removeItem("foodease_token");
@@ -132,6 +147,7 @@ function AuthProvider({ children }) {
         loading,
         signup,
         login,
+        adminLogin,
         logout,
       }}
     >
