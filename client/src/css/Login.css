@@ -151,7 +151,8 @@
   letter-spacing: 1.5px;
 }
 
-.login-field input {
+.login-field input,
+.login-field select {
   width: 100%;
   padding: 13px 0;
 
@@ -172,7 +173,8 @@
   color: #99978f;
 }
 
-.login-field input:focus {
+.login-field input:focus,
+.login-field select:focus {
   border-color: #8b741b;
 }
 

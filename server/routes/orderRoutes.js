@@ -185,10 +185,16 @@ router.get("/customer", authorize("customer"), async (req, res) => {
 
 router.get("/restaurant", authorize("restaurant"), async (req, res) => {
   try {
+    const restaurantQuery = { owner: req.user._id, status: "approved" };
+    if (req.query.restaurantId) {
+      if (!mongoose.isValidObjectId(req.query.restaurantId)) {
+        return res.status(400).json({ success: false, message: "Please select a valid restaurant." });
+      }
+      restaurantQuery._id = req.query.restaurantId;
+    }
     const restaurant = await Restaurant.findOne({
-      owner: req.user._id,
-      status: "approved",
-    }).select("_id");
+      ...restaurantQuery,
+    }).select("_id restaurantName");
 
     if (!restaurant) {
       return res.status(404).json({
@@ -206,6 +212,7 @@ router.get("/restaurant", authorize("restaurant"), async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      restaurant,
       orders,
     });
   } catch (error) {

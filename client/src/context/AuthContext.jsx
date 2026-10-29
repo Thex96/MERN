@@ -67,6 +67,7 @@ function AuthProvider({ children }) {
         username: credentials.username,
         email: credentials.email,
         password: credentials.password,
+        role: credentials.role === "restaurant" ? "restaurant" : "customer",
       });
     } catch (error) {
       throw new Error(
@@ -87,13 +88,14 @@ function AuthProvider({ children }) {
     return data;
   }
 
-  async function login(email, password) {
+  async function login(email, password, role = "customer") {
     let response;
 
     try {
       response = await api.post("/auth/login", {
         email,
         password,
+        role: role === "restaurant" ? "restaurant" : "customer",
       });
     } catch (error) {
       throw new Error(

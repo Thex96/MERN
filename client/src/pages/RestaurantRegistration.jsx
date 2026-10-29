@@ -3,16 +3,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
+import api from "../api/axios";
 import "../css/RestaurantRegistration.css";
 
-const API_BASE_URL = (
-  import.meta.env.VITE_API_URL || "https://foodeasess.onrender.com/api"
-).replace(/\/+$/, "");
-
-const API_URL = `${API_BASE_URL}/restaurants`;
-
-function RestaurantRegistration() {
-  const { token } = useAuth();
+function RestaurantRegistration({ embedded = false, onSubmitted }) {
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({
     restaurantName: "",
@@ -47,42 +42,17 @@ function RestaurantRegistration() {
 
     if (submitting) return;
 
-    if (!token) {
-      setError("Your session is missing. Please log in again.");
-      return;
-    }
-
     setSubmitting(true);
     setError("");
     setSuccess("");
 
     try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-
-      let data;
-
-      try {
-        data = await response.json();
-      } catch {
-        throw new Error("The server returned an invalid response.");
-      }
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Unable to submit your application."
-        );
-      }
+      const response = await api.post("/restaurants", formData);
 
       setSuccess(
         "Your restaurant application has been submitted successfully. It is now awaiting admin approval."
       );
+      onSubmitted?.(response.data.restaurant);
     } catch (err) {
       setError(
         err.message ||
@@ -95,7 +65,7 @@ function RestaurantRegistration() {
 
   return (
     <>
-      <Navbar />
+      {!embedded && <Navbar />}
 
       <main className="restaurant-registration">
         <header className="restaurant-registration-header">
@@ -297,9 +267,13 @@ function RestaurantRegistration() {
 
         <footer className="restaurant-registration-footer">
           <span>FOOD / PEOPLE / PLACES</span>
-          <Link to="/restaurant-dashboard">
-            BACK TO DASHBOARD <span>↗</span>
-          </Link>
+          {embedded ? (
+            <span>{user?.username}</span>
+          ) : (
+            <Link to="/restaurant-dashboard">
+              BACK TO DASHBOARD <span>↗</span>
+            </Link>
+          )}
         </footer>
       </main>
     </>

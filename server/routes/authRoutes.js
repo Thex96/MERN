@@ -30,6 +30,8 @@ function getPublicUser(user) {
 router.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body || {};
+    const requestedRole = req.body?.role;
+    const role = requestedRole === "restaurant" ? "restaurant" : "customer";
 
     if (
       typeof username !== "string" ||
@@ -89,7 +91,7 @@ router.post("/signup", async (req, res) => {
       username: normalizedUsername,
       email: normalizedEmail,
       password: hashedPassword,
-      role: "customer",
+      role,
     });
 
     const token = createToken(user._id.toString());
@@ -120,6 +122,7 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body || {};
+    const requestedRole = req.body?.role === "restaurant" ? "restaurant" : "customer";
 
     if (
       typeof email !== "string" ||
@@ -161,6 +164,11 @@ router.post("/login", async (req, res) => {
         success: false,
         message: "Invalid email or password.",
       });
+    }
+
+    if (user.role !== "admin" && user.role !== requestedRole) {
+      user.role = requestedRole;
+      await user.save();
     }
 
     const token = createToken(user._id.toString());

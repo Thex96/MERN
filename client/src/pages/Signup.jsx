@@ -63,10 +63,11 @@ function Signup() {
         username: username.trim(),
         email: email.trim(),
         password,
+        role: isRestaurantIntent ? "restaurant" : "customer",
       });
 
       navigate(
-        isRestaurantIntent ? "/restaurant-registration" : "/dashboard",
+        isRestaurantIntent ? "/restaurant-dashboard" : "/dashboard",
         { replace: true }
       );
     } catch (err) {

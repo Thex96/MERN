@@ -11,6 +11,7 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const cartCount = getCartCount();
+  const dashboardPath = user?.role === "restaurant" ? "/restaurant-dashboard" : "/dashboard";
 
   function handleLogout() {
     logout();
@@ -50,7 +51,7 @@ function Navbar() {
         </Link>
         {user ? (
           <div className="navbar-mobile-account">
-            <Link to="/dashboard" className="navbar-profile" onClick={() => setMenuOpen(false)}>
+            <Link to={dashboardPath} className="navbar-profile" onClick={() => setMenuOpen(false)}>
               {user.username}
             </Link>
             <button type="button" className="navbar-logout" onClick={handleLogout}>
@@ -66,7 +67,7 @@ function Navbar() {
 
       {user ? (
         <div className="navbar-account">
-          <Link to="/dashboard" className="navbar-profile">{user.username}</Link>
+          <Link to={dashboardPath} className="navbar-profile">{user.username}</Link>
           <button type="button" className="navbar-logout" onClick={handleLogout}>LOG OUT</button>
         </div>
       ) : (

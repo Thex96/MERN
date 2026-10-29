@@ -10,11 +10,11 @@ function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const destination =
-    location.state?.from?.pathname || "/dashboard";
+  const requestedDestination = location.state?.from?.pathname;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [accountRole, setAccountRole] = useState("customer");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -35,7 +35,14 @@ function Login() {
     setSubmitting(true);
 
     try {
-      await login(email.trim().toLowerCase(), password);
+      const { user } = await login(email.trim().toLowerCase(), password, accountRole);
+      const defaultDestination = user.role === "restaurant"
+        ? "/restaurant-dashboard"
+        : "/dashboard";
+      const requestedIsDashboard = ["/dashboard", "/restaurant-dashboard"].includes(requestedDestination);
+      const destination = !requestedDestination || requestedIsDashboard
+        ? defaultDestination
+        : requestedDestination;
       navigate(destination, { replace: true });
     } catch (error) {
       setError(error.message || "Unable to log in. Please try again.");
@@ -115,6 +122,18 @@ function Login() {
                   autoComplete="current-password"
                   required
                 />
+              </div>
+
+              <div className="login-field login-account-role">
+                <label htmlFor="accountRole">SIGN IN AS</label>
+                <select
+                  id="accountRole"
+                  value={accountRole}
+                  onChange={(event) => setAccountRole(event.target.value)}
+                >
+                  <option value="customer">CUSTOMER</option>
+                  <option value="restaurant">RESTAURANT MANAGER</option>
+                </select>
               </div>
 
               <div className="login-form-options">

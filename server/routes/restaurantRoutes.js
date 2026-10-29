@@ -1,62 +1,12 @@
 
 const express = require("express");
-const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
 const Restaurant = require("../models/Restaurant");
-const User = require("../models/User");
+const { protect, authorize } = require("../middleware/authMiddleware");
 
 const router = express.Router();
+router.use(protect);
 
-async function requireAuth(req, res, next) {
-  try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        success: false,
-        message: "Please log in to continue.",
-      });
-    }
-
-    const token = authHeader.slice(7);
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    if (!mongoose.isValidObjectId(decoded.userId)) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid authentication token.",
-      });
-    }
-
-    const user = await User.findById(decoded.userId).select("_id username email role");
-
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "User account not found.",
-      });
-    }
-
-    req.user = user;
-    next();
-  } catch (error) {
-    if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") {
-      return res.status(401).json({
-        success: false,
-        message: "Your session is invalid or has expired. Please log in again.",
-      });
-    }
-
-    console.error("Restaurant authentication error:", error.message);
-
-    return res.status(500).json({
-      success: false,
-      message: "Unable to verify your session.",
-    });
-  }
-}
-
-router.post("/", requireAuth, async (req, res) => {
+router.post("/", authorize("restaurant"), async (req, res) => {
   try {
     const {
       restaurantName,
@@ -122,19 +72,6 @@ router.post("/", requireAuth, async (req, res) => {
       });
     }
 
-    const existingApplication = await Restaurant.findOne({
-      owner: req.user._id,
-      status: { $in: ["pending", "approved"] },
-    });
-
-    if (existingApplication) {
-      return res.status(409).json({
-        success: false,
-        message:
-          "You already have a pending or approved restaurant application.",
-      });
-    }
-
     const restaurant = await Restaurant.create({
       ...clean,
       owner: req.user._id,
@@ -161,7 +98,7 @@ router.post("/", requireAuth, async (req, res) => {
   }
 });
 
-router.get("/mine", requireAuth, async (req, res) => {
+router.get("/mine", authorize("restaurant"), async (req, res) => {
   try {
     const restaurants = await Restaurant.find({ owner: req.user._id })
       .select(
