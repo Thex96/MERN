@@ -5,7 +5,11 @@ import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import "../css/RestaurantRegistration.css";
 
-const API_URL = "http://localhost:5000/api/restaurants";
+const API_BASE_URL = (
+  import.meta.env.VITE_API_URL || "https://foodeasess.onrender.com/api"
+).replace(/\/+$/, "");
+
+const API_URL = `${API_BASE_URL}/restaurants`;
 
 function RestaurantRegistration() {
   const { token } = useAuth();
@@ -277,7 +281,10 @@ function RestaurantRegistration() {
               </p>
             )}
 
-            <button type="submit" disabled={submitting || Boolean(success)}>
+            <button
+              type="submit"
+              disabled={submitting || Boolean(success)}
+            >
               {submitting
                 ? "SUBMITTING APPLICATION..."
                 : success
