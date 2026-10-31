@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
 import "../css/Restaurant.css";
+import api from "../api/axios";
 
 import spiceroomImage from "../assets/images/spiceroom.jpg";
 import casaverdeImage from "../assets/images/casaverde.jpg";
@@ -163,8 +165,35 @@ const restaurants = {
 function Restaurant() {
   const { restaurantId } = useParams();
   const { addToCart, cartItems } = useCart();
+  const [approvedRestaurant, setApprovedRestaurant] = useState(null);
+  const [loadedRestaurantId, setLoadedRestaurantId] = useState("");
+  const restaurant = restaurants[restaurantId] || (approvedRestaurant?.id === restaurantId ? approvedRestaurant : null);
+  const lookupDone = Boolean(restaurants[restaurantId] || loadedRestaurantId === restaurantId);
 
-  const restaurant = restaurants[restaurantId];
+  useEffect(() => {
+    let active = true;
+    if (restaurants[restaurantId]) return () => { active = false; };
+    api.get("/restaurants/approved").then(({ data }) => {
+      const record = (data.restaurants || []).find((item) => item._id === restaurantId);
+      if (active && record) {
+        const categories = [...new Set((record.menu || []).map((item) => item.category || "MENU"))].map((name) => ({
+          name: name.toUpperCase(),
+          items: record.menu.filter((item) => (item.category || "MENU") === name).map((item) => ({ ...item, price: `₹${item.price}`, image: item.imageUrl || record.imageUrl })),
+        }));
+        setApprovedRestaurant({
+          id: record._id, name: record.restaurantName, cuisine: record.cuisine,
+          rating: "NEW", deliveryTime: record.deliveryTime, price: record.priceRange,
+          city: record.city || record.state || "FOODEASE", image: record.imageUrl,
+          description: record.description, categories,
+        });
+      }
+    }).catch(() => {}).finally(() => { if (active) setLoadedRestaurantId(restaurantId); });
+    return () => { active = false; };
+  }, [restaurantId]);
+
+  if (!restaurant && !lookupDone) {
+    return <><Navbar /><main className="restaurant-not-found"><p>LOADING RESTAURANT</p></main></>;
+  }
 
   if (!restaurant) {
     return (

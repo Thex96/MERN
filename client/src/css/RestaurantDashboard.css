@@ -380,6 +380,14 @@
 
 .manager-applications, .manager-tools { margin-top: 42px; }
 .manager-application-list { display: grid; gap: 12px; }
+.manager-approved-carousel { display: flex; gap: 14px; overflow-x: auto; padding: 4px 2px 18px; scroll-snap-type: x mandatory; }
+.manager-approved-card { position: relative; display: flex; flex: 0 0 220px; flex-direction: column; gap: 8px; padding: 0 0 15px; overflow: hidden; border: 1px solid #3c3c3c; background: #1d1d1d; color: #f3f3f3; text-align: left; cursor: pointer; scroll-snap-align: start; }
+.manager-approved-card.is-selected { border-color: #c9c020; }
+.manager-approved-card img { width: 100%; height: 120px; object-fit: cover; }
+.manager-approved-card strong, .manager-approved-card small { margin: 0 13px; }
+.manager-approved-card strong { font-size: 14px; }
+.manager-approved-card small { color: #999; font-size: 10px; line-height: 1.5; }
+.manager-approved-status { margin: 4px 13px 0; color: #f2ec0d; font-size: 8px; font-weight: 700; letter-spacing: 1px; }
 .manager-application-card { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 20px 22px; border: 1px solid #3c3c3c; background: #1d1d1d; }
 .manager-application-card h3 { font-size: 15px; font-weight: 600; }
 .manager-application-card p, .manager-empty { margin-top: 8px; color: #999; font-size: 12px; line-height: 1.8; }

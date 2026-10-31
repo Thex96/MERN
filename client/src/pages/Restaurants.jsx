@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../css/Restaurants.css";
+import api from "../api/axios";
 
 import spiceroomImage from "../assets/images/spiceroom.jpg";
 import casaverdeImage from "../assets/images/casaverde.jpg";
@@ -95,17 +96,32 @@ function Restaurants() {
 
   const [locationOpen, setLocationOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [approved, setApproved] = useState([]);
 
-  const filteredLocations = locations.filter((location) =>
+  useEffect(() => {
+    api.get("/restaurants/approved").then(({ data }) => setApproved(data.restaurants || [])).catch(() => {});
+  }, []);
+
+  const availableLocations = useMemo(() => {
+    const combined = [...locations, ...approved.map((r) => ({ city: r.city, state: r.state }))];
+    return combined.filter((loc, index, all) => loc.city && all.findIndex((other) => other.city === loc.city && other.state === loc.state) === index);
+  }, [approved]);
+
+  const filteredLocations = availableLocations.filter((location) =>
     `${location.city} ${location.state}`
       .toLowerCase()
       .includes(search.toLowerCase())
   );
 
-  const filteredRestaurants = restaurants.filter(
+  const approvedForLocation = approved.filter((r) => r.city === selectedLocation.city).map((r) => ({
+    id: r._id, name: r.restaurantName, cuisine: r.cuisine, rating: "NEW",
+    deliveryTime: r.deliveryTime, price: r.priceRange, city: r.city,
+    image: r.imageUrl, approvedRecord: true,
+  }));
+  const filteredRestaurants = [...restaurants.filter(
     (restaurant) =>
       restaurant.city === selectedLocation.city
-  );
+  ), ...approvedForLocation];
 
   function selectLocation(location) {
     setSelectedLocation(location);

@@ -133,9 +133,21 @@ function RestaurantDashboard() {
 
               {restaurants.length === 0 ? (
                 <p className="manager-empty">No restaurant application yet. Submit your first restaurant below.</p>
-              ) : (
+              ) : restaurants.some((restaurant) => restaurant.status === "approved") && (
+                <div className="manager-approved-carousel" aria-label="Approved restaurants">
+                  {restaurants.filter((restaurant) => restaurant.status === "approved").map((restaurant) => (
+                    <button type="button" className={`manager-approved-card${selectedRestaurant?._id === restaurant._id ? " is-selected" : ""}`} key={restaurant._id} onClick={() => { setOrders([]); setSelectedId(restaurant._id); }}>
+                      {restaurant.imageUrl && <img src={restaurant.imageUrl} alt="" />}
+                      <span className="manager-approved-status">APPROVED</span>
+                      <strong>{restaurant.restaurantName}</strong>
+                      <small>{[restaurant.cuisine, restaurant.city].filter(Boolean).join(" · ")}</small>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {restaurants.some((restaurant) => restaurant.status !== "approved") && (
                 <div className="manager-application-list">
-                  {restaurants.map((restaurant) => (
+                  {restaurants.filter((restaurant) => restaurant.status !== "approved").map((restaurant) => (
                     <article className="manager-application-card" key={restaurant._id}>
                       <div>
                         <h3>{restaurant.restaurantName}</h3>

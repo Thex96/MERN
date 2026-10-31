@@ -20,7 +20,13 @@ function RestaurantRegistration({ embedded = false, onSubmitted }) {
     description: "",
     openingTime: "",
     closingTime: "",
+    city: "",
+    state: "",
+    imageUrl: "",
+    deliveryTime: "30–40 MIN",
+    priceRange: "₹₹",
   });
+  const [menu, setMenu] = useState([{ category: "", name: "", description: "", price: "", imageUrl: "" }]);
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -48,7 +54,10 @@ function RestaurantRegistration({ embedded = false, onSubmitted }) {
     setSuccess("");
 
     try {
-      const response = await api.post("/restaurants", formData);
+      const response = await api.post("/restaurants", {
+        ...formData,
+        menu: menu.filter((item) => item.name.trim()).map((item) => ({ ...item, price: Number(item.price) })),
+      });
 
       setSuccess(
         "Your restaurant application has been submitted successfully. It is now awaiting admin approval."
@@ -141,6 +150,30 @@ function RestaurantRegistration({ embedded = false, onSubmitted }) {
                 />
               </label>
 
+              <label>
+                CITY *
+                <input name="city" value={formData.city} onChange={handleChange} placeholder="Coimbatore" maxLength={80} required />
+              </label>
+              <label>
+                STATE *
+                <input name="state" value={formData.state} onChange={handleChange} placeholder="Tamil Nadu" maxLength={80} required />
+              </label>
+              <label className="restaurant-registration-full">
+                RESTAURANT IMAGE URL *
+                <input type="url" name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="https://example.com/restaurant.jpg" maxLength={2048} required />
+              </label>
+              <label>
+                DELIVERY ESTIMATE *
+                <input name="deliveryTime" value={formData.deliveryTime} onChange={handleChange} placeholder="30–40 MIN" maxLength={40} required />
+              </label>
+              <label>
+                PRICE RANGE *
+                <select name="priceRange" value={formData.priceRange} onChange={handleChange} required>
+                  <option value="₹">₹ · Budget</option><option value="₹₹">₹₹ · Moderate</option>
+                  <option value="₹₹₹">₹₹₹ · Premium</option><option value="₹₹₹₹">₹₹₹₹ · Fine dining</option>
+                </select>
+              </label>
+
               <label className="restaurant-registration-full">
                 ABOUT YOUR RESTAURANT
                 <textarea
@@ -156,8 +189,34 @@ function RestaurantRegistration({ embedded = false, onSubmitted }) {
           </div>
 
           <div className="restaurant-registration-section">
+            <p className="restaurant-registration-section-label">02 / MENU ITEMS</p>
+            <div className="restaurant-registration-grid">
+              {menu.map((item, index) => (
+                <div className="restaurant-menu-form-item restaurant-registration-full" key={index}>
+                  <div className="restaurant-registration-grid">
+                    {["category", "name", "description", "price", "imageUrl"].map((field) => (
+                      <label key={field} className={field === "description" || field === "imageUrl" ? "restaurant-registration-full" : ""}>
+                        {({ category: "CATEGORY *", name: "ITEM NAME *", description: "ITEM DESCRIPTION", price: "PRICE (₹) *", imageUrl: "ITEM IMAGE URL" })[field]}
+                        <input
+                          type={field === "price" ? "number" : field === "imageUrl" ? "url" : "text"}
+                          min={field === "price" ? "0" : undefined} step={field === "price" ? "0.01" : undefined}
+                          required={field === "category" || field === "name" || field === "price"}
+                          value={item[field]} placeholder={field === "imageUrl" ? "https://example.com/dish.jpg" : ""}
+                          onChange={(event) => setMenu((current) => current.map((row, rowIndex) => rowIndex === index ? { ...row, [field]: event.target.value } : row))}
+                        />
+                      </label>
+                    ))}
+                  </div>
+                  {menu.length > 1 && <button type="button" className="restaurant-menu-remove" onClick={() => setMenu((current) => current.filter((_, rowIndex) => rowIndex !== index))}>REMOVE ITEM</button>}
+                </div>
+              ))}
+              <button type="button" className="restaurant-menu-add" onClick={() => setMenu((current) => [...current, { category: "", name: "", description: "", price: "", imageUrl: "" }])}>+ ADD MENU ITEM</button>
+            </div>
+          </div>
+
+          <div className="restaurant-registration-section">
             <p className="restaurant-registration-section-label">
-              02 / OWNER DETAILS
+              03 / OWNER DETAILS
             </p>
 
             <div className="restaurant-registration-grid">
@@ -203,7 +262,7 @@ function RestaurantRegistration({ embedded = false, onSubmitted }) {
 
           <div className="restaurant-registration-section">
             <p className="restaurant-registration-section-label">
-              03 / OPERATING HOURS
+              04 / OPERATING HOURS
             </p>
 
             <div className="restaurant-registration-grid">

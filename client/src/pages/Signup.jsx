@@ -1,52 +1,97 @@
-
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import "../css/Signup.css";
 
+const PASSWORD_RULE =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s]).{8,72}$/;
+
+const PASSWORD_MESSAGE =
+  "Use 8–72 characters, including an uppercase letter, a lowercase letter, a number, and a symbol.";
+
 function Signup() {
-  const { signup } = useAuth();
+  const {
+    requestSignupCode,
+    verifySignupCode,
+    completeSignup,
+  } = useAuth();
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
   const isRestaurantIntent = searchParams.get("intent") === "restaurant";
+  const role = isRestaurantIntent ? "restaurant" : "customer";
 
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
+  const [step, setStep] = useState("details");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [signupToken, setSignupToken] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  function handleChange(event) {
-    const { name, value } = event.target;
-
-    setFormData((current) => ({
-      ...current,
-      [name]: value,
-    }));
-
-    setError("");
-  }
-
-  async function handleSubmit(event) {
+  async function handleSendCode(event) {
     event.preventDefault();
-
     if (loading) return;
 
-    const { username, email, password, confirmPassword } = formData;
+    const cleanUsername = username.trim();
+    const cleanEmail = email.trim();
 
-    if (!username.trim() || username.trim().length > 16) {
+    if (!cleanUsername || cleanUsername.length > 16) {
       setError("Username must contain between 1 and 16 characters.");
       return;
     }
 
-    if (password.length < 6 || password.length > 72) {
-      setError("Password must contain between 6 and 72 characters.");
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      await requestSignupCode({
+        username: cleanUsername,
+        email: cleanEmail,
+        role,
+      });
+      setUsername(cleanUsername);
+      setEmail(cleanEmail);
+      setStep("code");
+      setMessage(`We sent a verification code to ${cleanEmail}.`);
+    } catch (requestError) {
+      setError(requestError.message || "Could not send the code.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleVerifyCode(event) {
+    event.preventDefault();
+    if (loading) return;
+
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const verifiedToken = await verifySignupCode({ email, code });
+      setSignupToken(verifiedToken);
+      setStep("password");
+      setMessage("Email verified. Choose a password for your account.");
+    } catch (requestError) {
+      setError(requestError.message || "Could not verify the code.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleCreateAccount(event) {
+    event.preventDefault();
+    if (loading) return;
+
+    if (!PASSWORD_RULE.test(password)) {
+      setError(PASSWORD_MESSAGE);
       return;
     }
 
@@ -57,27 +102,29 @@ function Signup() {
 
     setLoading(true);
     setError("");
+    setMessage("");
 
     try {
-      await signup({
-        username: username.trim(),
-        email: email.trim(),
-        password,
-        role: isRestaurantIntent ? "restaurant" : "customer",
-      });
-
+      await completeSignup(signupToken, password);
       navigate(
         isRestaurantIntent ? "/restaurant-dashboard" : "/dashboard",
         { replace: true }
       );
-    } catch (err) {
-      setError(
-        err.message || "Unable to create your account. Please try again."
-      );
+    } catch (requestError) {
+      setError(requestError.message || "Unable to create your account.");
     } finally {
       setLoading(false);
     }
   }
+
+  const heading =
+    step === "details"
+      ? isRestaurantIntent
+        ? "Join as a partner."
+        : "Create account."
+      : step === "code"
+        ? "Check your email."
+        : "Choose a password.";
 
   return (
     <>
@@ -87,33 +134,16 @@ function Signup() {
         <section className="signup-left">
           <div className="signup-left-top">
             <span>FOODEASE</span>
-            <span>
-              {isRestaurantIntent
-                ? "RESTAURANT PARTNERS"
-                : "MEMBER REGISTRATION"}
-            </span>
+            <span>{isRestaurantIntent ? "RESTAURANT PARTNERS" : "MEMBER REGISTRATION"}</span>
           </div>
 
           <div className="signup-left-content">
-            <p>
-              {isRestaurantIntent
-                ? "FOR RESTAURANT OWNERS"
-                : "WELCOME TO FOODEASE"}
-            </p>
-
+            <p>{isRestaurantIntent ? "FOR RESTAURANT OWNERS" : "WELCOME TO FOODEASE"}</p>
             <h1>
               {isRestaurantIntent ? (
-                <>
-                  Your kitchen.
-                  <br />
-                  <span>Your business.</span>
-                </>
+                <>Your kitchen.<br /><span>Your business.</span></>
               ) : (
-                <>
-                  Good food.
-                  <br />
-                  <span>Good company.</span>
-                </>
+                <>Good food.<br /><span>Good company.</span></>
               )}
             </h1>
           </div>
@@ -128,113 +158,129 @@ function Signup() {
           <div className="signup-box">
             <div className="signup-box-header">
               <div>
-                <p>
-                  {isRestaurantIntent
-                    ? "PARTNER REGISTRATION"
-                    : "YOUR FOODEASE ACCOUNT"}
-                </p>
-                <h2>
-                  {isRestaurantIntent
-                    ? "Join as a partner."
-                    : "Create account."}
-                </h2>
+                <p>{isRestaurantIntent ? "PARTNER REGISTRATION" : "YOUR FOODEASE ACCOUNT"}</p>
+                <h2>{heading}</h2>
               </div>
-              <span>01 / 01</span>
+              <span>{step === "details" ? "01" : step === "code" ? "02" : "03"} / 03</span>
             </div>
 
-            <form className="signup-form" onSubmit={handleSubmit}>
-              <div className="signup-field">
-                <label htmlFor="username">USERNAME</label>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  placeholder="Choose a username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  maxLength={16}
-                  autoComplete="username"
-                  required
-                />
-              </div>
+            {step === "details" && (
+              <form className="signup-form" onSubmit={handleSendCode}>
+                <div className="signup-field">
+                  <label htmlFor="username">USERNAME</label>
+                  <input
+                    id="username"
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}
+                    maxLength={16}
+                    autoComplete="username"
+                    required
+                  />
+                </div>
 
-              <div className="signup-field">
-                <label htmlFor="email">EMAIL ADDRESS</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={formData.email}
-                  onChange={handleChange}
-                  maxLength={254}
-                  autoComplete="email"
-                  required
-                />
-              </div>
+                <div className="signup-field">
+                  <label htmlFor="email">EMAIL ADDRESS</label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    maxLength={254}
+                    autoComplete="email"
+                    required
+                  />
+                </div>
 
-              <div className="signup-row">
+                <button className="signup-submit" type="submit" disabled={loading}>
+                  <span>{loading ? "SENDING CODE..." : "SEND VERIFICATION CODE"}</span>
+                  <span aria-hidden="true">→</span>
+                </button>
+              </form>
+            )}
+
+            {step === "code" && (
+              <form className="signup-form" onSubmit={handleVerifyCode}>
+                <p>A six-digit code was sent to {email}. It expires in 10 minutes.</p>
+                <div className="signup-field">
+                  <label htmlFor="code">EMAIL VERIFICATION CODE</label>
+                  <input
+                    id="code"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    pattern="[0-9]{6}"
+                    maxLength={6}
+                    value={code}
+                    onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))}
+                    required
+                  />
+                </div>
+
+                <button className="signup-submit" type="submit" disabled={loading}>
+                  <span>{loading ? "VERIFYING..." : "VERIFY EMAIL"}</span>
+                  <span aria-hidden="true">→</span>
+                </button>
+
+                <button
+                  className="signup-back-button"
+                  type="button"
+                  disabled={loading}
+                  onClick={() => {
+                    setStep("details");
+                    setCode("");
+                    setError("");
+                    setMessage("");
+                  }}
+                >
+                  CHANGE EMAIL
+                </button>
+              </form>
+            )}
+
+            {step === "password" && (
+              <form className="signup-form" onSubmit={handleCreateAccount}>
+                <p>{PASSWORD_MESSAGE}</p>
+
                 <div className="signup-field">
                   <label htmlFor="password">PASSWORD</label>
                   <input
                     id="password"
-                    name="password"
                     type="password"
-                    placeholder="Create password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    minLength={6}
+                    minLength={8}
                     maxLength={72}
                     autoComplete="new-password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
                     required
                   />
                 </div>
 
                 <div className="signup-field">
-                  <label htmlFor="confirmPassword">
-                    CONFIRM PASSWORD
-                  </label>
+                  <label htmlFor="confirmPassword">CONFIRM PASSWORD</label>
                   <input
                     id="confirmPassword"
-                    name="confirmPassword"
                     type="password"
-                    placeholder="Confirm password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    minLength={6}
+                    minLength={8}
                     maxLength={72}
                     autoComplete="new-password"
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
                     required
                   />
                 </div>
-              </div>
 
-              {error && (
-                <p className="signup-error" role="alert">
-                  {error}
-                </p>
-              )}
+                <button className="signup-submit" type="submit" disabled={loading}>
+                  <span>{loading ? "CREATING ACCOUNT..." : "CREATE ACCOUNT"}</span>
+                  <span aria-hidden="true">→</span>
+                </button>
+              </form>
+            )}
 
-              <button
-                className="signup-submit"
-                type="submit"
-                disabled={loading}
-              >
-                <span>
-                  {loading
-                    ? "CREATING ACCOUNT..."
-                    : isRestaurantIntent
-                      ? "CREATE PARTNER ACCOUNT"
-                      : "CREATE ACCOUNT"}
-                </span>
-                <span aria-hidden="true">→</span>
-              </button>
-            </form>
+            {error && <p className="signup-error" role="alert">{error}</p>}
+            {message && <p className="signup-message" role="status">{message}</p>}
 
             {isRestaurantIntent && (
               <p className="signup-error signup-partner-note">
-                Restaurant applications require admin approval. Creating an
-                account does not automatically approve your restaurant.
+                Restaurant applications require admin approval. Creating an account does not automatically approve your restaurant.
               </p>
             )}
 
@@ -242,9 +288,7 @@ function Signup() {
               <div className="signup-option">
                 <span>ALREADY A MEMBER?</span>
                 <p>Welcome back to FoodEase.</p>
-                <Link to="/login">
-                  LOG IN <span aria-hidden="true">↗</span>
-                </Link>
+                <Link to="/login">LOG IN <span aria-hidden="true">↗</span></Link>
               </div>
 
               {!isRestaurantIntent && (
@@ -259,9 +303,7 @@ function Signup() {
             </div>
           </div>
 
-          <span className="signup-right-mark">
-            FOOD / PEOPLE / PLACES
-          </span>
+          <span className="signup-right-mark">FOOD / PEOPLE / PLACES</span>
         </section>
       </main>
     </>

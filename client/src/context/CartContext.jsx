@@ -1,5 +1,6 @@
 
 import { createContext, useContext, useState } from "react";
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
 
@@ -17,9 +18,27 @@ function getItemPrice(item) {
 }
 
 function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([]);
+  const [, setCartRevision] = useState(0);
+  const { user } = useAuth();
+  const customerKey = user?.role === "customer" ? `foodease_cart_${user._id || user.id || user.email}` : "";
+
+  function readCart() {
+    if (!customerKey) return [];
+    try {
+      const cart = JSON.parse(localStorage.getItem(customerKey) || "[]");
+      return Array.isArray(cart) ? cart : [];
+    } catch { return []; }
+  }
+
+  const cartItems = readCart();
+  function updateCart(updater) {
+    if (!customerKey) return;
+    localStorage.setItem(customerKey, JSON.stringify(updater(readCart())));
+    setCartRevision((revision) => revision + 1);
+  }
 
   function addToCart(item, restaurant) {
+    if (!customerKey) return;
     const restaurantId = getRestaurantId(restaurant);
 
     if (!restaurantId || !item?.name) {
@@ -29,7 +48,7 @@ function CartProvider({ children }) {
 
     const price = getItemPrice(item);
 
-    setCartItems((currentItems) => {
+    updateCart((currentItems) => {
       const existingItem = currentItems.find(
         (cartItem) =>
           cartItem.name === item.name &&
@@ -63,7 +82,7 @@ function CartProvider({ children }) {
   }
 
   function removeFromCart(itemName, restaurantId) {
-    setCartItems((currentItems) =>
+    updateCart((currentItems) =>
       currentItems.filter(
         (item) =>
           !(
@@ -82,7 +101,7 @@ function CartProvider({ children }) {
       return;
     }
 
-    setCartItems((currentItems) =>
+    updateCart((currentItems) =>
       currentItems.map((item) =>
         item.name === itemName &&
         String(item.restaurantId) === String(restaurantId)
@@ -111,7 +130,7 @@ function CartProvider({ children }) {
   }
 
   function clearCart() {
-    setCartItems([]);
+    updateCart(() => []);
   }
 
   return (
@@ -131,6 +150,8 @@ function CartProvider({ children }) {
   );
 }
 
+// The context hook is exported beside its provider for this app's context pattern.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCart() {
   return useContext(CartContext);
 }

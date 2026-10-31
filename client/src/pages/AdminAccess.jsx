@@ -39,7 +39,7 @@ function AdminAccess() {
             value={password}
             onChange={(event) => { setPassword(event.target.value); setError(""); }}
             placeholder="ENTER PASSWORD"
-            autoComplete="current-password"
+            autoComplete="off"
             autoFocus
             required
           />

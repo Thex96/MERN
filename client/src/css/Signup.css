@@ -469,3 +469,22 @@
   .signup-box-header h2 { font-size: 28px; }
   .signup-box-header > span { font-size: 8px; }
 }
+
+.signup-message {
+  margin: 12px 0 0;
+  color: #356b42;
+  font-family: "Manrope", sans-serif;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.signup-back-button {
+  padding: 10px 0;
+  border: 0;
+  background: transparent;
+  color: #6d5b18;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+}

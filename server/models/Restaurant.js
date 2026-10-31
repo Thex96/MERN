@@ -53,6 +53,19 @@ const restaurantSchema = new mongoose.Schema(
       maxlength: 500,
     },
 
+    city: { type: String, trim: true, maxlength: 80, default: "" },
+    state: { type: String, trim: true, maxlength: 80, default: "" },
+    imageUrl: { type: String, trim: true, maxlength: 2048, default: "" },
+    deliveryTime: { type: String, trim: true, maxlength: 40, default: "30–40 MIN" },
+    priceRange: { type: String, enum: ["₹", "₹₹", "₹₹₹", "₹₹₹₹"], default: "₹₹" },
+    menu: [{
+      category: { type: String, trim: true, maxlength: 80 },
+      name: { type: String, trim: true, maxlength: 100 },
+      description: { type: String, trim: true, maxlength: 300, default: "" },
+      price: { type: Number, min: 0 },
+      imageUrl: { type: String, trim: true, maxlength: 2048, default: "" },
+    }],
+
     description: {
       type: String,
       trim: true,

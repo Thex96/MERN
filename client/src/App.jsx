@@ -38,7 +38,7 @@ function App() {
 
     <Route path="/about" element={<About />} />
 
-    <Route path="/cart" element={<Cart />} />
+    <Route path="/cart" element={<ProtectedRoute role="customer"><Cart /></ProtectedRoute>} />
 
     <Route path="/login" element={<Login />} />
 
@@ -81,7 +81,7 @@ function App() {
       }
     />
 
-    <Route path="/checkout" element={<Checkout />} />
+    <Route path="/checkout" element={<ProtectedRoute role="customer"><Checkout /></ProtectedRoute>} />
   </Routes>
 </BrowserRouter>
 

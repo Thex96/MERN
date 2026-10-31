@@ -45,10 +45,9 @@ function Navbar() {
         <Link to="/restaurants" onClick={() => setMenuOpen(false)}>Restaurants</Link>
         <Link to="/offers" onClick={() => setMenuOpen(false)}>Offers</Link>
         <Link to="/about" onClick={() => setMenuOpen(false)}>About</Link>
-        <Link to="/cart" className="navbar-cart" onClick={() => setMenuOpen(false)}>
-          Cart
-          {cartCount > 0 && <span className="navbar-cart-count">{cartCount}</span>}
-        </Link>
+        {user?.role === "customer" && <Link to="/cart" className="navbar-cart" onClick={() => setMenuOpen(false)}>
+          Cart{cartCount > 0 && <span className="navbar-cart-count">{cartCount}</span>}
+        </Link>}
         {user ? (
           <div className="navbar-mobile-account">
             <Link to={dashboardPath} className="navbar-profile" onClick={() => setMenuOpen(false)}>

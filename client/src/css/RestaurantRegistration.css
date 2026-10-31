@@ -133,6 +133,11 @@
   grid-column: 1 / -1;
 }
 
+.restaurant-menu-form-item { padding: 20px; border: 1px solid #393939; background: #171717; }
+.restaurant-menu-add, .restaurant-menu-remove { padding: 12px 15px; border: 1px solid #c9c020; background: transparent; color: #f2ec0d; font-size: 9px; font-weight: 700; letter-spacing: 1px; cursor: pointer; }
+.restaurant-menu-add:hover, .restaurant-menu-remove:hover { background: #c9c020; color: #131313; }
+.restaurant-menu-remove { margin-top: 14px; border-color: #754848; color: #e1a3a3; }
+
 .restaurant-registration-submit {
   display: flex;
   justify-content: space-between;

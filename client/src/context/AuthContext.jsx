@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useCallback,
   useState,
 } from "react";
 import api from "../api/axios";
@@ -15,12 +16,22 @@ function AuthProvider({ children }) {
 
   useEffect(() => {
     try {
-      const storedUser = localStorage.getItem("foodease_user");
-      const storedToken = localStorage.getItem("foodease_token");
+      const adminUser = sessionStorage.getItem("foodease_admin_user");
+      const adminToken = sessionStorage.getItem("foodease_admin_token");
+      const isAdminSession = Boolean(adminUser && adminToken);
+      const storedUser = adminUser || localStorage.getItem("foodease_user");
+      const storedToken = adminToken || localStorage.getItem("foodease_token");
 
       if (storedUser && storedToken) {
-        setUser(JSON.parse(storedUser));
-        setToken(storedToken);
+        const userData = JSON.parse(storedUser);
+
+        if (userData.role !== "admin" || isAdminSession) {
+          setUser(userData);
+          setToken(storedToken);
+        } else {
+          localStorage.removeItem("foodease_user");
+          localStorage.removeItem("foodease_token");
+        }
       }
     } catch {
       localStorage.removeItem("foodease_user");
@@ -33,111 +44,131 @@ function AuthProvider({ children }) {
   function saveSession(userData, authToken) {
     localStorage.setItem("foodease_user", JSON.stringify(userData));
     localStorage.setItem("foodease_token", authToken);
-
     setUser(userData);
     setToken(authToken);
   }
 
-  function getErrorMessage(error, fallback) {
-    if (error.response) {
-      return error.response.data?.message || fallback;
-    }
-
-    if (error.request) {
-      return "Cannot connect to FoodEase server. Please try again later.";
-    }
-
-    return error.message || fallback;
+  function errorMessage(error, fallback) {
+    return error.response?.data?.message || fallback;
   }
 
-  async function signup(input, emailArg, passwordArg) {
-    const credentials =
-      typeof input === "object" && input !== null
-        ? input
-        : {
-            username: input,
-            email: emailArg,
-            password: passwordArg,
-          };
-
-    let response;
-
+  async function requestSignupCode({ username, email, role }) {
     try {
-      response = await api.post("/auth/signup", {
-        username: credentials.username,
-        email: credentials.email,
-        password: credentials.password,
-        role: credentials.role === "restaurant" ? "restaurant" : "customer",
+      const response = await api.post("/auth/signup/send-code", {
+        username,
+        email,
+        role,
       });
+      return response.data;
     } catch (error) {
-      throw new Error(
-        getErrorMessage(error, "Unable to create your account.")
-      );
+      throw new Error(errorMessage(error, "Could not send the code."));
     }
+  }
 
-    const data = response.data;
-
-    if (!data.user || !data.token) {
-      throw new Error(
-        data.message || "The server did not return a valid user session."
-      );
+  async function verifySignupCode({ email, code }) {
+    try {
+      const response = await api.post("/auth/signup/verify-code", {
+        email,
+        code,
+      });
+      return response.data.signupToken;
+    } catch (error) {
+      throw new Error(errorMessage(error, "Could not verify the code."));
     }
+  }
 
-    saveSession(data.user, data.token);
+  async function completeSignup(signupToken, password) {
+    try {
+      const response = await api.post("/auth/signup/complete", {
+        signupToken,
+        password,
+      });
 
-    return data;
+      const data = response.data;
+      if (!data.user || !data.token) {
+        throw new Error("The server did not return a valid user session.");
+      }
+
+      saveSession(data.user, data.token);
+      return data;
+    } catch (error) {
+      throw new Error(errorMessage(error, "Could not create your account."));
+    }
   }
 
   async function login(email, password, role = "customer") {
-    let response;
-
     try {
-      response = await api.post("/auth/login", {
+      const response = await api.post("/auth/login", {
         email,
         password,
         role: role === "restaurant" ? "restaurant" : "customer",
       });
+
+      const data = response.data;
+      if (!data.user || !data.token) {
+        throw new Error("The server did not return a valid user session.");
+      }
+
+      saveSession(data.user, data.token);
+      return data;
     } catch (error) {
-      throw new Error(
-        getErrorMessage(error, "Unable to log in.")
-      );
+      throw new Error(errorMessage(error, "Unable to log in."));
     }
-
-    const data = response.data;
-
-    if (!data.user || !data.token) {
-      throw new Error(
-        data.message || "The server did not return a valid user session."
-      );
-    }
-
-    saveSession(data.user, data.token);
-
-    return data;
   }
 
   async function adminLogin(password) {
-    let response;
     try {
-      response = await api.post("/auth/admin-login", { password });
+      const response = await api.post("/auth/admin-login", { password });
+      const data = response.data;
+
+      if (data.user?.role !== "admin" || !data.token) {
+        throw new Error("The server did not return a valid admin session.");
+      }
+
+      sessionStorage.setItem("foodease_admin_user", JSON.stringify(data.user));
+      sessionStorage.setItem("foodease_admin_token", data.token);
+      setUser(data.user);
+      setToken(data.token);
+      return data;
     } catch (error) {
-      throw new Error(getErrorMessage(error, "Unable to sign in as admin."));
+      throw new Error(errorMessage(error, "Unable to sign in as admin."));
     }
-    const data = response.data;
-    if (data.user?.role !== "admin" || !data.token) {
-      throw new Error(data.message || "The server did not return a valid admin session.");
-    }
-    saveSession(data.user, data.token);
-    return data;
   }
 
-  function logout() {
+  const logoutAdmin = useCallback(() => {
+    sessionStorage.removeItem("foodease_admin_user");
+    sessionStorage.removeItem("foodease_admin_token");
+
+    try {
+      const savedUser = localStorage.getItem("foodease_user");
+      const savedToken = localStorage.getItem("foodease_token");
+
+      if (savedUser && savedToken) {
+        const userData = JSON.parse(savedUser);
+        if (userData.role !== "admin") {
+          setUser(userData);
+          setToken(savedToken);
+          return;
+        }
+      }
+    } catch {
+      // Clear the invalid session below.
+    }
+
     localStorage.removeItem("foodease_user");
     localStorage.removeItem("foodease_token");
-
     setUser(null);
     setToken(null);
-  }
+  }, []);
+
+  const logout = useCallback(() => {
+    localStorage.removeItem("foodease_user");
+    localStorage.removeItem("foodease_token");
+    sessionStorage.removeItem("foodease_admin_user");
+    sessionStorage.removeItem("foodease_admin_token");
+    setUser(null);
+    setToken(null);
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -145,9 +176,12 @@ function AuthProvider({ children }) {
         user,
         token,
         loading,
-        signup,
+        requestSignupCode,
+        verifySignupCode,
+        completeSignup,
         login,
         adminLogin,
+        logoutAdmin,
         logout,
       }}
     >
