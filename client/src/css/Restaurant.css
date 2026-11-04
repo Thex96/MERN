@@ -1,0 +1,520 @@
+
+.restaurant-page {
+  min-height: 100vh;
+  padding: 35px 6% 120px;
+  background-color: #131313;
+  color: #f3f3f3;
+}
+
+.restaurant-back {
+  margin-bottom: 35px;
+}
+
+.restaurant-back a {
+  color: #888888;
+  text-decoration: none;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  transition: color 0.3s ease;
+}
+
+.restaurant-back a:hover {
+  color: #f5cb5c;
+}
+
+.restaurant-hero {
+  min-height: 560px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 70px;
+  border-bottom: 1px solid #333333;
+  padding-bottom: 70px;
+}
+
+.restaurant-hero-image {
+  width: 100%;
+  height: 560px;
+  overflow: hidden;
+  background-color: #333333;
+}
+
+.restaurant-hero-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: grayscale(15%);
+  transition: transform 0.8s ease, filter 0.8s ease;
+}
+
+.restaurant-hero-image:hover img {
+  transform: scale(1.03);
+  filter: grayscale(0%);
+}
+
+.restaurant-hero-content {
+  align-self: center;
+  min-width: 0;
+}
+
+.restaurant-label {
+  margin: 0 0 18px;
+  color: #f5cb5c;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.restaurant-hero-content h1 {
+  margin: 0;
+  color: #f3f3f3;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(48px, 6vw, 82px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -2px;
+  overflow-wrap: anywhere;
+}
+
+.restaurant-cuisine {
+  margin: 22px 0 0;
+  color: #888888;
+  font-family: "Manrope", sans-serif;
+  font-size: 13px;
+}
+
+.restaurant-description {
+  max-width: 430px;
+  margin: 28px 0 0;
+  color: #777777;
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+
+.restaurant-details {
+  margin-top: 35px;
+  padding-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 30px;
+  border-top: 1px solid #333333;
+  color: #888888;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.restaurant-details span:first-child {
+  color: #f5cb5c;
+}
+
+.restaurant-menu {
+  padding-top: 90px;
+}
+
+.restaurant-menu-heading {
+  margin-bottom: 75px;
+}
+
+.restaurant-menu-heading p {
+  margin: 0 0 18px;
+  color: #f5cb5c;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.restaurant-menu-heading h2 {
+  margin: 0;
+  color: #f3f3f3;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -1.5px;
+  overflow-wrap: anywhere;
+}
+
+.restaurant-category {
+  margin-bottom: 75px;
+}
+
+.restaurant-category-title {
+  padding-bottom: 18px;
+  border-bottom: 1px solid #333333;
+}
+
+.restaurant-category-title h3 {
+  margin: 0;
+  color: #888888;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.restaurant-food-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.restaurant-food-item {
+  min-width: 0;
+  padding: 25px 0;
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 25px;
+  border-bottom: 1px solid #292929;
+}
+
+.restaurant-food-image {
+  width: 100%;
+  height: 120px;
+  overflow: hidden;
+  background-color: #333333;
+}
+
+.restaurant-food-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: grayscale(15%);
+  transition: transform 0.6s ease, filter 0.6s ease;
+}
+
+.restaurant-food-item:hover .restaurant-food-image img {
+  transform: scale(1.04);
+  filter: grayscale(0%);
+}
+
+.restaurant-food-content {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.restaurant-food-content > div {
+  min-width: 0;
+}
+
+.restaurant-food-content h4 {
+  margin: 0;
+  color: #f3f3f3;
+  font-family: "Playfair Display", serif;
+  font-size: 24px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.restaurant-food-content p {
+  max-width: 500px;
+  margin: 8px 0 0;
+  color: #777777;
+  font-family: "Manrope", sans-serif;
+  font-size: 11px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.restaurant-food-action {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  flex-shrink: 0;
+}
+
+.restaurant-food-action span {
+  color: #f3f3f3;
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.restaurant-food-action button {
+  min-width: 78px;
+  min-height: 40px;
+  padding: 10px 15px;
+  background: transparent;
+  border: 1px solid #444444;
+  color: #f5cb5c;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.restaurant-food-action button:hover {
+  background-color: #f5cb5c;
+  border-color: #f5cb5c;
+  color: #131313;
+}
+
+.restaurant-menu-empty {
+  padding: 60px 0;
+  border-top: 1px solid #333333;
+}
+
+.restaurant-menu-empty h3 {
+  margin: 0;
+  color: #f3f3f3;
+  font-family: "Playfair Display", serif;
+  font-size: 32px;
+  font-weight: 500;
+}
+
+.restaurant-menu-empty p {
+  margin-top: 12px;
+  color: #777777;
+  font-family: "Manrope", sans-serif;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.restaurant-not-found {
+  min-height: calc(100vh - 80px);
+  padding: 100px 6%;
+  background-color: #131313;
+  color: #f3f3f3;
+}
+
+.restaurant-not-found p {
+  margin-bottom: 20px;
+  color: #f5cb5c;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.restaurant-not-found h1 {
+  margin: 0;
+  color: #f3f3f3;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(45px, 6vw, 75px);
+  font-weight: 500;
+  line-height: 0.95;
+  overflow-wrap: anywhere;
+}
+
+.restaurant-not-found a {
+  display: inline-block;
+  margin-top: 35px;
+  color: #888888;
+  text-decoration: none;
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  transition: color 0.3s ease;
+}
+
+.restaurant-not-found a:hover {
+  color: #f5cb5c;
+}
+
+@media (min-width: 651px) and (max-width: 1024px) {
+  .restaurant-page {
+    padding: 30px 5% 90px;
+  }
+
+  .restaurant-hero {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    gap: clamp(24px, 4vw, 48px);
+    padding-bottom: 54px;
+  }
+
+  .restaurant-hero-image {
+    height: clamp(300px, 42vw, 440px);
+  }
+
+  .restaurant-hero-content h1 {
+    font-size: clamp(42px, 5.2vw, 62px);
+    line-height: 1.02;
+  }
+
+  .restaurant-details {
+    gap: 14px 22px;
+  }
+
+  .restaurant-menu {
+    padding-top: 65px;
+  }
+
+  .restaurant-menu-heading {
+    margin-bottom: 50px;
+  }
+
+  .restaurant-food-item {
+    grid-template-columns: 125px minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .restaurant-food-image {
+    height: 112px;
+  }
+
+  .restaurant-food-content {
+    gap: 18px;
+  }
+
+  .restaurant-food-content h4 {
+    font-size: 21px;
+  }
+
+  .restaurant-food-action {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 650px) {
+  .restaurant-page {
+    padding: 24px 5% 64px;
+  }
+
+  .restaurant-back {
+    margin-bottom: 24px;
+  }
+
+  .restaurant-hero {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    padding-bottom: 38px;
+  }
+
+  .restaurant-hero-image {
+    height: clamp(210px, 65vw, 350px);
+  }
+
+  .restaurant-hero-content h1 {
+    font-size: clamp(36px, 10vw, 50px);
+    line-height: 1.02;
+    letter-spacing: -0.8px;
+  }
+
+  .restaurant-label,
+  .restaurant-menu-heading p {
+    letter-spacing: 2px;
+    line-height: 1.6;
+  }
+
+  .restaurant-description {
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  .restaurant-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    font-size: 9px;
+    line-height: 1.6;
+  }
+
+  .restaurant-menu {
+    padding-top: 48px;
+  }
+
+  .restaurant-menu-heading {
+    margin-bottom: 38px;
+  }
+
+  .restaurant-menu-heading h2 {
+    font-size: clamp(34px, 9vw, 45px);
+    line-height: 1.05;
+  }
+
+  .restaurant-category {
+    margin-bottom: 46px;
+  }
+
+  .restaurant-food-item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding: 20px 0;
+  }
+
+  .restaurant-food-image {
+    height: clamp(150px, 48vw, 220px);
+  }
+
+  .restaurant-food-content {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .restaurant-food-content h4 {
+    font-size: 21px;
+    line-height: 1.2;
+  }
+
+  .restaurant-food-content p {
+    font-size: 12px;
+  }
+
+  .restaurant-food-action {
+    width: 100%;
+    min-width: 0;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .restaurant-food-action button {
+    min-height: 42px;
+    padding: 10px 16px;
+  }
+
+  .restaurant-menu-empty {
+    padding: 40px 0;
+  }
+
+  .restaurant-menu-empty h3 {
+    font-size: 27px;
+  }
+
+  .restaurant-not-found {
+    min-height: 60vh;
+    padding: 64px 5%;
+  }
+
+  .restaurant-not-found h1 {
+    font-size: clamp(38px, 10vw, 55px);
+    line-height: 1.02;
+  }
+}
+
+@media (max-width: 360px) {
+  .restaurant-page {
+    padding-inline: 16px;
+  }
+
+  .restaurant-hero-content h1 {
+    font-size: 35px;
+  }
+
+  .restaurant-details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .restaurant-food-action {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
