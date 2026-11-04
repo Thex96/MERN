@@ -2,7 +2,6 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const EmailVerification = require("../models/EmailVerification");
 
@@ -29,24 +28,58 @@ function getPublicUser(user) {
   };
 }
 
-function getMailer() {
-  if (
-    !process.env.SMTP_HOST ||
-    !process.env.SMTP_USER ||
-    !process.env.SMTP_PASSWORD
-  ) {
-    throw new Error("Email delivery is not configured.");
+function getEmailSender() {
+  const configuredSender = process.env.EMAIL_FROM?.trim();
+
+  if (!configuredSender) {
+    throw new Error("EMAIL_FROM is not configured.");
   }
 
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: Number(process.env.SMTP_PORT) === 465,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
+  const match = configuredSender.match(/^(.*?)\s*<([^<>]+)>$/);
+
+  if (match) {
+    return {
+      name: match[1].trim() || "FoodEase",
+      email: match[2].trim(),
+    };
+  }
+
+  return {
+    name: "FoodEase",
+    email: configuredSender,
+  };
+}
+
+async function sendVerificationEmail(email, code) {
+  const apiKey = process.env.BREVO_API_KEY?.trim();
+
+  if (!apiKey) {
+    throw new Error("BREVO_API_KEY is not configured.");
+  }
+
+  const sender = getEmailSender();
+
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "api-key": apiKey,
+      "content-type": "application/json",
     },
+    body: JSON.stringify({
+      sender,
+      to: [{ email }],
+      subject: "Your FoodEase verification code",
+      textContent: `Your FoodEase verification code is ${code}. It expires in 10 minutes.`,
+      htmlContent: `<p>Your FoodEase verification code is <strong>${code}</strong>.</p><p>It expires in 10 minutes.</p>`,
+    }),
   });
+
+  if (!response.ok) {
+    const responseText = await response.text();
+    console.error("Brevo email request failed:", response.status, responseText);
+    throw new Error(`Brevo email request failed with status ${response.status}.`);
+  }
 }
 
 router.post("/signup/send-code", async (req, res) => {
@@ -54,7 +87,8 @@ router.post("/signup/send-code", async (req, res) => {
     const { username, email } = req.body || {};
     const role = req.body?.role === "restaurant" ? "restaurant" : "customer";
     const cleanUsername = typeof username === "string" ? username.trim() : "";
-    const cleanEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    const cleanEmail =
+      typeof email === "string" ? email.trim().toLowerCase() : "";
 
     if (
       !cleanUsername ||
@@ -105,12 +139,7 @@ router.post("/signup/send-code", async (req, res) => {
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
-    await getMailer().sendMail({
-      from: process.env.EMAIL_FROM || process.env.SMTP_USER,
-      to: cleanEmail,
-      subject: "Your FoodEase verification code",
-      text: `Your FoodEase verification code is ${code}. It expires in 10 minutes.`,
-    });
+    await sendVerificationEmail(cleanEmail, code);
 
     return res.status(200).json({
       success: true,
@@ -271,7 +300,9 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email: normalizedEmail }).select("+password");
+    const user = await User.findOne({ email: normalizedEmail }).select(
+      "+password"
+    );
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({
