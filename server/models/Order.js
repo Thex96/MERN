@@ -131,6 +131,16 @@ const orderSchema = new mongoose.Schema(
     subtotal: { type: Number, required: true, min: 0 },
     deliveryFee: { type: Number, required: true, min: 0, default: 0 },
     distanceKm: { type: Number, min: 0, default: null },
+    routeDurationMinutes: { type: Number, min: 0, default: null },
+    deliveryFeeBreakdown: {
+      baseFee: { type: Number, min: 0, default: 0 },
+      distanceFee: { type: Number, min: 0, default: 0 },
+      demandSurcharge: { type: Number, min: 0, default: 0 },
+      peakSurcharge: { type: Number, min: 0, default: 0 },
+      seasonalSurcharge: { type: Number, min: 0, default: 0 },
+      trafficSurcharge: { type: Number, min: 0, default: 0 },
+      weatherSurcharge: { type: Number, min: 0, default: 0 },
+    },
     paymentMethod: {
       type: String,
       enum: ["cod", "upi", "card"],

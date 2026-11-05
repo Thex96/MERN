@@ -636,6 +636,8 @@
 .checkout-summary-total > div strong { min-width: 0; text-align: right; overflow-wrap: anywhere; }
 .checkout-summary-total .checkout-grand-total { padding-top: 12px; border-top: 1px solid #555; font-weight: 700; }
 .checkout-summary-total > p { margin: 10px 0 0; color: #e1a3a3; font-size: 12px; line-height: 1.6; }
+.checkout-summary-total > .checkout-route-attribution { color: #9b9891; font-size: 11px; }
+.checkout-route-attribution a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 
 @media (max-width: 640px) {
   .checkout-summary-total > div { font-size: 13px; }

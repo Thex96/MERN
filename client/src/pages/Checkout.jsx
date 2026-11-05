@@ -202,6 +202,7 @@ function Checkout() {
         items,
         deliveryAddressId: selectedAddressId,
         paymentMethod,
+        deliveryQuoteToken: deliveryQuote.quoteToken,
       });
 
       const createdOrder = response.data.order;
@@ -216,11 +217,29 @@ function Checkout() {
         clearCart();
       }
     } catch (requestError) {
-      setError(
-        requestError.response?.data?.message ||
-          requestError.message ||
-          "Unable to place your order. Please try again."
-      );
+      if (requestError.response?.status === 409) {
+        setError("Your delivery quote expired or changed. Review the updated fee and place your order again.");
+        try {
+          const { data } = await api.post("/orders/estimate", {
+            restaurantId: restaurantIds[0],
+            deliveryAddressId: selectedAddressId,
+          });
+          setDeliveryQuote(data);
+          setEstimateError("");
+        } catch (estimateRequestError) {
+          setDeliveryQuote(null);
+          setEstimateError(
+            estimateRequestError.response?.data?.message ||
+              "Unable to refresh the delivery charge. Please try again."
+          );
+        }
+      } else {
+        setError(
+          requestError.response?.data?.message ||
+            requestError.message ||
+            "Unable to place your order. Please try again."
+        );
+      }
     } finally {
       setPlacingOrder(false);
     }
@@ -525,6 +544,25 @@ function Checkout() {
                     <div className="checkout-summary-total">
                       <div><span>Subtotal</span><strong>{formatPrice(cartTotal)}</strong></div>
                       <div><span>Delivery{deliveryQuote?.available ? ` · ${deliveryQuote.distanceKm} km` : ""}</span><strong>{deliveryQuote?.available ? formatPrice(deliveryQuote.deliveryFee) : deliveryQuote?.available === false ? "Unavailable" : estimatingDelivery ? "Calculating" : "—"}</strong></div>
+                      {deliveryQuote?.available && Object.entries({
+                        "Base fee": deliveryQuote.feeBreakdown?.baseFee,
+                        "Distance charge": deliveryQuote.feeBreakdown?.distanceFee,
+                        "Peak-time surcharge": deliveryQuote.feeBreakdown?.peakSurcharge,
+                        "High-demand surcharge": deliveryQuote.feeBreakdown?.demandSurcharge,
+                        "Seasonal surcharge": deliveryQuote.feeBreakdown?.seasonalSurcharge,
+                        "Traffic adjustment": deliveryQuote.feeBreakdown?.trafficSurcharge,
+                        "Weather adjustment": deliveryQuote.feeBreakdown?.weatherSurcharge,
+                      }).filter(([, amount]) => Number(amount) > 0).map(([label, amount]) => (
+                        <div className="checkout-delivery-breakdown" key={label}>
+                          <span>{label}</span>
+                          <strong>{formatPrice(amount)}</strong>
+                        </div>
+                      ))}
+                      {deliveryQuote?.available && (
+                        <p className="checkout-route-attribution">
+                          Road route via <a href="https://project-osrm.org/" target="_blank" rel="noreferrer">OSRM</a> using <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap data</a>.
+                        </p>
+                      )}
                       {estimateError && <p role="alert">{estimateError}</p>}
                       {deliveryQuote?.available === false && <p role="alert">This address is outside the restaurant's delivery area. Choose a closer address or restaurant.</p>}
                       <div className="checkout-grand-total"><span>Total</span><strong>{deliveryQuote?.available ? formatPrice(cartTotal + deliveryQuote.deliveryFee) : "—"}</strong></div>

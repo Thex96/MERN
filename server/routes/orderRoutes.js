@@ -1,37 +1,126 @@
 
 const express = require("express");
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 const Order = require("../models/Order");
 const Restaurant = require("../models/Restaurant");
 const DeliveryAddress = require("../models/DeliveryAddress");
 const { protect, authorize } = require("../middleware/authMiddleware");
 const geocodeAddress = require("../utils/geocodeAddress");
+const getRoadDistance = require("../utils/getRoadDistance");
+const { calculateDeliveryFee, roundMoney } = require("../utils/deliveryPricing");
 
 const router = express.Router();
 
-function quoteDelivery(restaurant, address) {
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+async function quoteDelivery(restaurant, address) {
   const restaurantCoordinates = restaurant.location?.coordinates;
   const addressCoordinates = address.location?.coordinates;
   if (!restaurantCoordinates || !addressCoordinates) return null;
-  const radians = (degrees) => degrees * Math.PI / 180;
-  const [restaurantLongitude, restaurantLatitude] = restaurantCoordinates;
-  const [addressLongitude, addressLatitude] = addressCoordinates;
-  const latitudeDifference = radians(addressLatitude - restaurantLatitude);
-  const longitudeDifference = radians(addressLongitude - restaurantLongitude);
-  const haversine = Math.sin(latitudeDifference / 2) ** 2 +
-    Math.cos(radians(restaurantLatitude)) * Math.cos(radians(addressLatitude)) *
-    Math.sin(longitudeDifference / 2) ** 2;
-  const distanceKm = 6371 * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
-  const baseFee = Number(process.env.DELIVERY_BASE_FEE || 40);
-  const feePerKm = Number(process.env.DELIVERY_FEE_PER_KM || 5);
+  const route = await getRoadDistance(restaurantCoordinates, addressCoordinates);
   const configuredMaximum = Number(process.env.DELIVERY_MAX_DISTANCE_KM || 30);
   const maximumDistance = Number.isFinite(configuredMaximum) && configuredMaximum > 0 ? configuredMaximum : 30;
-  const roundedDistance = Math.round(distanceKm * 10) / 10;
-  if (distanceKm > maximumDistance) {
-    return { distanceKm: roundedDistance, deliveryFee: null, available: false, maximumDistance };
+  const distanceKm = Math.round(route.distanceKm * 10) / 10;
+
+  if (route.distanceKm > maximumDistance) {
+    return {
+      distanceKm,
+      routeDurationMinutes: Math.ceil(route.durationMinutes),
+      deliveryFee: null,
+      available: false,
+      maximumDistance,
+    };
   }
-  const deliveryFee = Math.round((baseFee + distanceKm * feePerKm) * 100) / 100;
-  return { distanceKm: roundedDistance, deliveryFee, available: true, maximumDistance };
+
+  const demandWindowMinutes = Number(process.env.DELIVERY_DEMAND_WINDOW_MINUTES || 60);
+  const demandStart = new Date(Date.now() - Math.max(1, demandWindowMinutes) * 60 * 1000);
+  const cityPattern = new RegExp(`^${escapeRegex(String(address.city || "").trim())}$`, "i");
+  const activeCityOrders = await Order.countDocuments({
+    "deliveryAddress.city": cityPattern,
+    orderStatus: { $in: ["placed", "confirmed", "preparing", "ready", "out_for_delivery"] },
+    createdAt: { $gte: demandStart },
+  });
+  const pricing = calculateDeliveryFee({
+    distanceKm: route.distanceKm,
+    activeCityOrders,
+  });
+
+  return {
+    distanceKm,
+    routeDurationMinutes: Math.ceil(route.durationMinutes),
+    deliveryFee: pricing.deliveryFee,
+    feeBreakdown: pricing.feeBreakdown,
+    activeCityOrders,
+    available: true,
+    maximumDistance,
+  };
+}
+
+function signDeliveryQuote(quote, restaurant, address, customerId) {
+  if (!quote.available) return quote;
+
+  const payload = {
+    type: "delivery_quote",
+    customerId: String(customerId),
+    restaurantId: String(restaurant._id),
+    deliveryAddressId: String(address._id),
+    restaurantCoordinates: restaurant.location.coordinates,
+    addressCoordinates: address.location.coordinates,
+    distanceKm: quote.distanceKm,
+    routeDurationMinutes: quote.routeDurationMinutes,
+    deliveryFee: quote.deliveryFee,
+    feeBreakdown: quote.feeBreakdown,
+    activeCityOrders: quote.activeCityOrders,
+  };
+
+  return {
+    ...quote,
+    quoteToken: jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "15m" }),
+  };
+}
+
+function verifyDeliveryQuote(token, restaurant, address, customerId) {
+  if (typeof token !== "string" || !token) {
+    throw new Error("Refresh the delivery estimate before placing your order.");
+  }
+
+  let quote;
+  try {
+    quote = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    throw new Error("Your delivery estimate expired. Refresh it and try again.");
+  }
+
+  const sameCoordinates = (first, second) =>
+    Array.isArray(first) &&
+    Array.isArray(second) &&
+    first.length === 2 &&
+    second.length === 2 &&
+    first.every((coordinate, index) => Number(coordinate) === Number(second[index]));
+
+  if (
+    quote.type !== "delivery_quote" ||
+    quote.customerId !== String(customerId) ||
+    quote.restaurantId !== String(restaurant._id) ||
+    quote.deliveryAddressId !== String(address._id) ||
+    !sameCoordinates(quote.restaurantCoordinates, restaurant.location?.coordinates) ||
+    !sameCoordinates(quote.addressCoordinates, address.location?.coordinates)
+  ) {
+    throw new Error("Delivery details changed. Refresh the delivery estimate and try again.");
+  }
+
+  return {
+    distanceKm: Number(quote.distanceKm),
+    routeDurationMinutes: Number(quote.routeDurationMinutes),
+    deliveryFee: roundMoney(Number(quote.deliveryFee)),
+    feeBreakdown: quote.feeBreakdown,
+    activeCityOrders: Number(quote.activeCityOrders) || 0,
+    available: true,
+    maximumDistance: Number(process.env.DELIVERY_MAX_DISTANCE_KM || 30),
+  };
 }
 
 async function ensureGeocoded(restaurant, address) {
@@ -54,6 +143,10 @@ function geocodingFailure(error) {
     error.message?.startsWith("Enter a complete");
 }
 
+function routingFailure(error) {
+  return error.message?.toLowerCase().includes("route");
+}
+
 router.use(protect);
 
 router.post("/estimate", authorize("customer"), async (req, res) => {
@@ -68,11 +161,11 @@ router.post("/estimate", authorize("customer"), async (req, res) => {
     ]);
     if (!restaurant || !address) return res.status(404).json({ success: false, message: "Restaurant or delivery address was not found." });
     await ensureGeocoded(restaurant, address);
-    const quote = quoteDelivery(restaurant, address);
+    const quote = await quoteDelivery(restaurant, address);
     if (!quote) return res.status(400).json({ success: false, message: "Add map coordinates to the restaurant and delivery address to calculate delivery." });
     return res.status(200).json({
       success: true,
-      ...quote,
+      ...signDeliveryQuote(quote, restaurant, address, req.user._id),
       restaurant: {
         name: restaurant.restaurantName,
         address: restaurant.address,
@@ -90,13 +183,14 @@ router.post("/estimate", authorize("customer"), async (req, res) => {
     });
   } catch (error) {
     console.error("Delivery estimate error:", error.message);
-    return res.status(geocodingFailure(error) ? 422 : 500).json({ success: false, message: error.message || "Unable to calculate the delivery charge." });
+    const status = geocodingFailure(error) ? 422 : routingFailure(error) ? 503 : 500;
+    return res.status(status).json({ success: false, message: error.message || "Unable to calculate the delivery charge." });
   }
 });
 
 router.post("/", authorize("customer"), async (req, res) => {
   try {
-    const { restaurantId, items, deliveryAddressId, paymentMethod } = req.body;
+    const { restaurantId, items, deliveryAddressId, paymentMethod, deliveryQuoteToken } = req.body;
 
     if (
       !mongoose.isValidObjectId(restaurantId) ||
@@ -156,12 +250,16 @@ router.post("/", authorize("customer"), async (req, res) => {
 
     await ensureGeocoded(restaurant, address);
 
-    const deliveryQuote = quoteDelivery(restaurant, address);
-    if (!deliveryQuote) {
-      return res.status(400).json({ success: false, message: "Add map coordinates to the restaurant and delivery address to calculate delivery." });
-    }
-    if (!deliveryQuote.available) {
-      return res.status(422).json({ success: false, message: `This address is outside this restaurant's delivery area of ${deliveryQuote.maximumDistance} km.` });
+    let deliveryQuote;
+    try {
+      deliveryQuote = verifyDeliveryQuote(
+        deliveryQuoteToken,
+        restaurant,
+        address,
+        req.user._id
+      );
+    } catch (error) {
+      return res.status(409).json({ success: false, message: error.message });
     }
 
     const normalizedItems = [];
@@ -242,6 +340,8 @@ router.post("/", authorize("customer"), async (req, res) => {
       subtotal,
       deliveryFee: deliveryQuote.deliveryFee,
       distanceKm: deliveryQuote.distanceKm,
+      routeDurationMinutes: deliveryQuote.routeDurationMinutes,
+      deliveryFeeBreakdown: deliveryQuote.feeBreakdown,
       paymentMethod,
       paymentStatus: "pending",
       orderStatus: "placed",
@@ -256,7 +356,8 @@ router.post("/", authorize("customer"), async (req, res) => {
   } catch (error) {
     console.error("Create order error:", error.message);
 
-    return res.status(geocodingFailure(error) ? 422 : 500).json({
+    const status = geocodingFailure(error) ? 422 : routingFailure(error) ? 503 : 500;
+    return res.status(status).json({
       success: false,
       message: error.message || "Unable to place your order right now.",
     });
