@@ -9,6 +9,27 @@ const router = express.Router();
 
 router.use(protect, authorize("customer"));
 
+function isValidLocation(location) {
+  const coordinates = location?.coordinates;
+  return location?.type === "Point" && Array.isArray(coordinates) && coordinates.length === 2 &&
+    Number.isFinite(Number(coordinates[0])) && Number.isFinite(Number(coordinates[1])) &&
+    Number(coordinates[0]) >= -180 && Number(coordinates[0]) <= 180 &&
+    Number(coordinates[1]) >= -90 && Number(coordinates[1]) <= 90;
+}
+
+router.post("/reverse-geocode", async (req, res) => {
+  try {
+    const { latitude, longitude } = req.body;
+    const address = await geocodeAddress.reverse(latitude, longitude);
+    return res.status(200).json({ success: true, address });
+  } catch (error) {
+    return res.status(422).json({
+      success: false,
+      message: error.message || "Unable to find an address near your current location.",
+    });
+  }
+});
+
 router.get("/", async (req, res) => {
   try {
     const addresses = await DeliveryAddress.find({
@@ -41,6 +62,7 @@ router.post("/", async (req, res) => {
       state,
       postalCode,
       isDefault,
+      location: suppliedLocation,
     } = req.body;
 
     if (
@@ -58,7 +80,9 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const location = await geocodeAddress({ addressLine, area, city, state, postalCode });
+    const location = isValidLocation(suppliedLocation)
+      ? { type: "Point", coordinates: suppliedLocation.coordinates.map(Number) }
+      : await geocodeAddress({ addressLine, area, city, state, postalCode });
 
     const addressCount = await DeliveryAddress.countDocuments({
       customer: req.user._id,
@@ -157,7 +181,9 @@ router.put("/:id", async (req, res) => {
       }
     }
 
-    address.location = await geocodeAddress(address);
+    address.location = isValidLocation(req.body.location)
+      ? { type: "Point", coordinates: req.body.location.coordinates.map(Number) }
+      : await geocodeAddress(address);
     address.locationVerifiedAt = new Date();
 
     if (req.body.isDefault === true) {

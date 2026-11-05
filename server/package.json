@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "create-admin": "node scripts/createAdmin.js",
     "migrate-legacy-restaurants": "node scripts/migrateLegacyRestaurants.js"
   },
   "keywords": [],

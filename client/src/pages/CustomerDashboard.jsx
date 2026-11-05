@@ -17,6 +17,7 @@ const emptyAddress = {
   city: "",
   state: "",
   postalCode: "",
+  location: null,
   isDefault: false,
 };
 
@@ -54,6 +55,7 @@ function CustomerDashboard() {
   const [editingAddressId, setEditingAddressId] = useState(null);
   const [addressForm, setAddressForm] = useState(emptyAddress);
   const [savingAddress, setSavingAddress] = useState(false);
+  const [locatingAddress, setLocatingAddress] = useState(false);
   const [deletingAddressId, setDeletingAddressId] = useState(null);
   const [settingDefaultId, setSettingDefaultId] = useState(null);
 
@@ -67,7 +69,7 @@ function CustomerDashboard() {
       setOrders(
         Array.isArray(response.data.orders) ? response.data.orders : []
       );
-    } catch (error) {
+    } catch {
       setOrderError(
         error.response?.data?.message ||
           "Unable to load your orders. Please try again."
@@ -132,6 +134,7 @@ function CustomerDashboard() {
       city: address.city || "",
       state: address.state || "",
       postalCode: address.postalCode || "",
+      location: address.location || null,
       isDefault: Boolean(address.isDefault),
     });
     setAddressError("");
@@ -154,6 +157,51 @@ function CustomerDashboard() {
     }));
   }
 
+  function useCurrentLocation() {
+    setAddressError("");
+    setAddressMessage("");
+
+    if (!navigator.geolocation) {
+      setAddressError("This browser does not support location access. Enter your address manually.");
+      return;
+    }
+
+    setLocatingAddress(true);
+    navigator.geolocation.getCurrentPosition(async ({ coords }) => {
+      const location = { type: "Point", coordinates: [coords.longitude, coords.latitude] };
+      setAddressForm((current) => ({ ...current, location }));
+
+      try {
+        const response = await api.post("/addresses/reverse-geocode", {
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+        });
+        const found = response.data.address || {};
+        setAddressForm((current) => ({
+          ...current,
+          ...Object.fromEntries(
+            ["addressLine", "area", "city", "state", "postalCode"]
+              .map((field) => [field, found[field] || current[field]])
+          ),
+          location,
+        }));
+        setAddressMessage("Current location found. Check the address details and complete any missing fields.");
+      } catch (error) {
+        setAddressMessage("Your current location was captured. Enter the street, city, state, and PIN code to finish the address.");
+      } finally {
+        setLocatingAddress(false);
+      }
+    }, (error) => {
+      setLocatingAddress(false);
+      const message = error.code === 1
+        ? "Location access was denied. Allow location access in your browser or enter the address manually."
+        : error.code === 3
+          ? "Location request timed out. Please try again or enter the address manually."
+          : "Your current location is unavailable. Please try again or enter the address manually.";
+      setAddressError(message);
+    }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+  }
+
   async function handleAddressSubmit(event) {
     event.preventDefault();
     setSavingAddress(true);
@@ -170,6 +218,7 @@ function CustomerDashboard() {
         city: addressForm.city.trim(),
         state: addressForm.state.trim(),
         postalCode: addressForm.postalCode.trim(),
+        ...(addressForm.location ? { location: addressForm.location } : {}),
       };
 
       let savedAddress;
@@ -535,7 +584,15 @@ function CustomerDashboard() {
                     required
                   />
                 </label>
-                <p className="address-location-help">The map location is found automatically from this address when you save it.</p>
+                <button
+                  type="button"
+                  className="address-location-button"
+                  onClick={useCurrentLocation}
+                  disabled={locatingAddress || savingAddress}
+                >
+                  {locatingAddress ? "FINDING YOUR LOCATION..." : "USE MY CURRENT LOCATION"}
+                </button>
+                <p className="address-location-help">Allow location access to fill your address and save the exact map position. You can also enter the address manually.</p>
               </div>
 
               <label className="address-default-toggle">
